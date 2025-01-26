@@ -4,7 +4,7 @@ service:
   log_level: "debug" 
 
 mongodb:
-  url: "mongodb://localhost:27017"
+  uri: "mongodb://localhost:27017"
   database: "laptopStore"
   collections:
     products: "products"

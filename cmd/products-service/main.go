@@ -2,38 +2,61 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/mephirious/group-project/internal/adapters/http"
-	"github.com/mephirious/group-project/internal/app"
-	"github.com/mephirious/group-project/internal/usecase"
+	"github.com/mephirious/group-project/pkg"
 )
 
 func main() {
-	// Initialize usecases
-	productUsecase := usecase.NewProductUsecase()
-	reviewUsecase := usecase.NewReviewUsecase()
-	categoryUsecase := usecase.NewCategoryUsecase()
+	// Load configuration from config.yaml
+	config, err := pkg.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
 
-	// Create handlers with usecases
-	productHandler := &http.ProductHandler{ProductUsecase: productUsecase}
-	reviewHandler := &http.ReviewHandler{ReviewUsecase: reviewUsecase}
-	categoryHandler := &http.CategoryHandler{CategoryUsecase: categoryUsecase}
+	// Create a context for the application lifecycle
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	// Create a new server with the handlers
+	// Set up a channel to listen for OS signals (graceful shutdown)
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt, syscall.SIGTERM)
+
+	// Initialize the database
+	db, err := pkg.NewDB(ctx, *config)
+	if err != nil {
+		log.Fatalf("Failed to initialize MongoDB: %v", err)
+	}
+	defer func() {
+		if err := db.Close(ctx); err != nil {
+			log.Printf("Error closing MongoDB connection: %v", err)
+		}
+	}()
+
+	// Initialize HTTP handlers with the database repository
+	productHandler := &http.service.ProductHandler{}
+	reviewHandler := &http.service.ReviewHandler{}
+	categoryHandler := &http.service.CategoryHandler{}
+
+	// Create the server
 	server := http.NewServer(productHandler, reviewHandler, categoryHandler)
 
-	// Initialize the App with the server
-	app := app.New(server)
+	server.Run(ctx)
 
-	// Run the server in the context of the app
-	ctx := context.Background()
-	app.SimpleServer.Run(ctx)
+	// Wait for a termination signal
+	<-signalChan
+	log.Println("Shutdown signal received")
 
-	// Optionally, add graceful shutdown handling
-	select {
-	case <-ctx.Done():
-		// Graceful shutdown or cleanup if necessary
-		fmt.Println("Shutting down the server...")
-	}
+	// Perform graceful shutdown
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer shutdownCancel()
+
+	server.Stop(shutdownCtx)
+
+	log.Println("Server stopped")
 }

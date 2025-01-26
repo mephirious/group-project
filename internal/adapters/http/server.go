@@ -3,6 +3,8 @@ package http
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	service "github.com/mephirious/group-project/internal/adapters/http/service"
@@ -10,10 +12,10 @@ import (
 
 // Server represents the HTTP server
 type Server struct {
-	srv             *gin.Engine
+	srv             *http.Server
 	productHandler  *service.ProductHandler
 	reviewHandler   *service.ReviewHandler
-	categoryHandler *service.CategoryHandler ``
+	categoryHandler *service.CategoryHandler
 }
 
 // NewServer creates a new Server with the provided handlers
@@ -26,9 +28,12 @@ func NewServer(productHandler *service.ProductHandler, reviewHandler *service.Re
 	reviewHandler.Routes(r)
 	categoryHandler.Routes(r)
 
-	// Return a new Server instance with Gin engine
+	// Create an http.Server with the Gin router as the handler
 	return &Server{
-		srv:             r,
+		srv: &http.Server{
+			Addr:    ":8080",
+			Handler: r,
+		},
 		productHandler:  productHandler,
 		reviewHandler:   reviewHandler,
 		categoryHandler: categoryHandler,
@@ -37,8 +42,26 @@ func NewServer(productHandler *service.ProductHandler, reviewHandler *service.Re
 
 // Run starts the HTTP server
 func (s *Server) Run(ctx context.Context) {
-	// Start the server on port 9000
-	if err := s.srv.Run(":8080"); err != nil {
-		fmt.Println("Server failed to start:", err)
+	// Start the server in a separate goroutine
+	go func() {
+		if err := s.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			fmt.Println("Server failed to start:", err)
+		}
+	}()
+	<-ctx.Done()
+	s.Stop(ctx)
+}
+
+// Stop gracefully shuts down the server
+func (s *Server) Stop(ctx context.Context) {
+	// Create a context with timeout for shutdown
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	// Attempt to shut down the server gracefully
+	if err := s.srv.Shutdown(ctx); err != nil {
+		fmt.Println("Server shutdown failed:", err)
+	} else {
+		fmt.Println("Server stopped gracefully")
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mephirious/group-project/internal/service"
+	service "github.com/mephirious/group-project/internal/adapters/http/service"
 )
 
 // Server represents the HTTP server
@@ -13,7 +13,7 @@ type Server struct {
 	srv             *gin.Engine
 	productHandler  *service.ProductHandler
 	reviewHandler   *service.ReviewHandler
-	categoryHandler *service.CategoryHandler
+	categoryHandler *service.CategoryHandler ``
 }
 
 // NewServer creates a new Server with the provided handlers

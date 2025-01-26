@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	model "github.com/mephirious/group-project/internal/model"
-	"github.com/mephirious/group-project/internal/usecase"
+	usecase "github.com/mephirious/group-project/internal/usecase/category"
 )
 
 // CategoryHandler is responsible for handling category-related HTTP requests.
@@ -13,12 +13,9 @@ type CategoryHandler struct {
 	categoryUsecase *usecase.Category
 }
 
-// NewCategoryHandler creates a new CategoryHandler and registers routes.
-func NewCategoryHandler(r *gin.Engine, categoryUsecase *usecase.Category) {
-	handler := &CategoryHandler{categoryUsecase}
-
-	r.POST("/categories", handler.Create)
-	r.GET("/categories", handler.GetAll)
+func (h *CategoryHandler) Routes(r *gin.Engine) {
+	r.POST("/categories", h.Create)
+	r.GET("/categories", h.GetAll)
 }
 
 // Create creates a new category.

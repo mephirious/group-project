@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	model "github.com/mephirious/group-project/internal/model"
-	"github.com/mephirious/group-project/internal/usecase"
+	usecase "github.com/mephirious/group-project/internal/usecase/product"
 )
 
 // ProductHandler is responsible for handling product-related HTTP requests.
@@ -13,15 +13,12 @@ type ProductHandler struct {
 	productUsecase *usecase.Product
 }
 
-// NewProductHandler creates a new ProductHandler and registers routes.
-func NewProductHandler(r *gin.Engine, productUsecase *usecase.Product) {
-	handler := &ProductHandler{productUsecase}
-
-	r.POST("/products", handler.Create)
-	r.GET("/products", handler.GetAll)
-	r.GET("/products/:id", handler.Get)
-	r.PUT("/products/:id", handler.Update)
-	r.DELETE("/products/:id", handler.Delete)
+func (h *ProductHandler) Routes(r *gin.Engine) {
+	r.POST("/products", h.Create)
+	r.GET("/products", h.GetAll)
+	r.GET("/products/:id", h.Get)
+	r.PUT("/products/:id", h.Update)
+	r.DELETE("/products/:id", h.Delete)
 }
 
 // Create creates a new product.

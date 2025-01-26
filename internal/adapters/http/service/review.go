@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	model "github.com/mephirious/group-project/internal/model"
-	"github.com/mephirious/group-project/internal/usecase"
+	usecase "github.com/mephirious/group-project/internal/usecase/review"
 )
 
 // ReviewHandler is responsible for handling review-related HTTP requests.
@@ -13,12 +13,9 @@ type ReviewHandler struct {
 	reviewUsecase *usecase.Review
 }
 
-// NewReviewHandler creates a new ReviewHandler and registers routes.
-func NewReviewHandler(r *gin.Engine, reviewUsecase *usecase.Review) {
-	handler := &ReviewHandler{reviewUsecase}
-
-	r.POST("/reviews/:productID", handler.Add)
-	r.GET("/reviews/:productID", handler.GetAll)
+func (h *ReviewHandler) Routes(r *gin.Engine) {
+	r.POST("/reviews/:productID", h.Add)
+	r.GET("/reviews/:productID", h.GetAll)
 }
 
 // Add adds a new review for a product.

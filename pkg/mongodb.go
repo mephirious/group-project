@@ -5,31 +5,25 @@ import (
 	"fmt"
 
 	"github.com/ilyakaznacheev/cleanenv"
+	cfg "github.com/mephirious/group-project/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-type Config struct {
-	MongoDB struct {
-		URI      string `yaml:"uri" env:"MONGODB_URI"`
-		Database string `yaml:"database" env:"MONGODB_DATABASE"`
-	} `yaml:"mongodb"`
-}
 
 type DB struct {
 	Client *mongo.Client
 	DB     *mongo.Database
 }
 
-func LoadConfig() (*Config, error) {
-	var config Config
+func LoadConfig() (*cfg.Config, error) {
+	var config cfg.Config
 	if err := cleanenv.ReadConfig("config.yaml", &config); err != nil {
 		return nil, fmt.Errorf("unable to read config: %w", err)
 	}
 	return &config, nil
 }
 
-func NewDB(ctx context.Context, cfg Config) (*DB, error) {
+func NewDB(ctx context.Context, cfg cfg.Config) (*DB, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(cfg.MongoDB.URI))
 	if err != nil {
 		return nil, fmt.Errorf("mongo.Connect: %w", err)

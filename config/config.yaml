@@ -1,0 +1,12 @@
+service:
+  name: "products-service"
+  port: 8080
+  log_level: "debug" 
+
+mongodb:
+  url: "mongodb://localhost:27017"
+  database: "laptopStore"
+  collections:
+    products: "products"
+    reviews: "reviews"
+    categories: "categories"

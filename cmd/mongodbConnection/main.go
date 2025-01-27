@@ -25,7 +25,7 @@ func main() {
 
 	client, err := db.ConnectToMongoDB(ctx, cfg.Database.URI)
 	if err != nil {
-		slog.Error(fmt.Sprintf("Error occured while loading config: %s", err))
+		slog.Error(fmt.Sprintf("Error occured while connecting mongoDB: %s", err))
 		os.Exit(1)
 	}
 	defer db.DisconnectFromMongoDB(ctx, client)
@@ -35,10 +35,14 @@ func main() {
 	db := client.Database("laptopStore")
 	collection := db.Collection("products")
 
-	err = collection.FindOne(ctx, bson.M{"_id": "1001"}).Decode(&product)
+	err = collection.FindOne(ctx, bson.M{"_id": "101"}).Decode(&product)
 	if err != nil {
 		slog.Error(fmt.Sprintf("Error occured while finding record in db: %s", err))
 	}
+	var products []domain.Product
 
-	fmt.Println(product)
+	cursor, err := collection.Find(ctx, bson.D{})
+	fmt.Println(cursor)
+	err = cursor.All(ctx, &products)
+	fmt.Println(products)
 }

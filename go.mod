@@ -1,4 +1,4 @@
-module github.com/mephirious/group-project/products-service
+module github.com/mephirious/group-project/services/products-service
 
 go 1.23.0
 

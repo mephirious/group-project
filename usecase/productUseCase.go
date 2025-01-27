@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/mephirious/group-project/products-service/domain"
-	"github.com/mephirious/group-project/products-service/repository"
+	"github.com/mephirious/group-project/services/products-service/domain"
+	"github.com/mephirious/group-project/services/products-service/repository"
 )
 
 type ProductUseCase interface {

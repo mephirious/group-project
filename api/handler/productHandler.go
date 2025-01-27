@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mephirious/group-project/products-service/domain"
-	"github.com/mephirious/group-project/products-service/usecase"
+	"github.com/mephirious/group-project/services/products-service/domain"
+	"github.com/mephirious/group-project/services/products-service/usecase"
 )
 
 type ProductHandler struct {

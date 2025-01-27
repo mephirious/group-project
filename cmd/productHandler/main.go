@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mephirious/group-project/products-service/api/handler"
-	"github.com/mephirious/group-project/products-service/config"
-	"github.com/mephirious/group-project/products-service/db"
-	"github.com/mephirious/group-project/products-service/repository"
-	"github.com/mephirious/group-project/products-service/usecase"
+	"github.com/mephirious/group-project/services/products-service/api/handler"
+	"github.com/mephirious/group-project/services/products-service/config"
+	"github.com/mephirious/group-project/services/products-service/db"
+	"github.com/mephirious/group-project/services/products-service/repository"
+	"github.com/mephirious/group-project/services/products-service/usecase"
 	"golang.org/x/exp/slog"
 )
 

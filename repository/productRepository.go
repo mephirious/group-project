@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mephirious/group-project/products-service/domain"
+	"github.com/mephirious/group-project/services/products-service/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )

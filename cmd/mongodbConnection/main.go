@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/mephirious/group-project/products-service/config"
-	"github.com/mephirious/group-project/products-service/db"
-	"github.com/mephirious/group-project/products-service/domain"
+	"github.com/mephirious/group-project/services/products-service/config"
+	"github.com/mephirious/group-project/services/products-service/db"
+	"github.com/mephirious/group-project/services/products-service/domain"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

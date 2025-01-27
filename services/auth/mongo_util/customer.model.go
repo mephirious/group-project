@@ -5,6 +5,7 @@ import "time"
 type CustomerView struct {
 	ID       string `bson:"_id"`
 	Email    string `bson:"email"`
+	Password string `bson:"password"`
 	Verified bool   `bson:"verified"`
 	// FirstName string    `bson:"first_name,omitempty"`
 	// LastName  string    `bson:"last_name,omitempty"`

@@ -1,18 +1,37 @@
 package config
 
+import (
+	"github.com/spf13/viper"
+)
+
 type Config struct {
-	Service struct {
-		Name     string `yaml:"name" env:"SERVICE_NAME"`
-		Port     int    `yaml:"port" env:"SERVICE_PORT"`
-		LogLevel string `yaml:"log_level" env:"SERVICE_LOG_LEVEL"`
-	} `yaml:"service"`
-	MongoDB struct {
-		URI         string `yaml:"uri" env:"MONGODB_URI"`
-		Database    string `yaml:"database" env:"MONGODB_DATABASE"`
-		Collections struct {
-			Products   string `yaml:"products" env:"MONGODB_PRODUCTS"`
-			Reviews    string `yaml:"reviews" env:"MONGODB_REVIEWS"`
-			Categories string `yaml:"categories" env:"MONGODB_CATEGORIES"`
-		} `yaml:"collections"`
-	} `yaml:"mongodb"`
+	Server struct {
+		Port int `mapstructure:"port"`
+	} `mapstructure:"server"`
+	Database struct {
+		URI  string `mapstructure:"uri"`
+		Name string `mapstructure:"name"`
+	} `mapstructure:"database"`
+	Logging struct {
+		Level string `mapstructure:"level"`
+	} `mapstructure:"logging"`
+}
+
+func LoadConfig() (*Config, error) {
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("../config")
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	var config Config
+	err = viper.Unmarshal(&config)
+	if err != nil {
+		return nil, err
+	}
+
+	return &config, nil
 }

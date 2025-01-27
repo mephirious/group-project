@@ -24,10 +24,11 @@ func (s *LoggingService) Register(ctx context.Context, input RegisterInput) (res
 		logger := s.logger
 		if response != nil {
 			logger = s.logger.With(slog.Any("user", response.User))
+		} else {
+			logger = s.logger.With(slog.Any("err", err))
 		}
 		logger.Info(
 			"Register",
-			"err", err,
 			"took", time.Since(start).String(),
 		)
 	}()
@@ -37,10 +38,14 @@ func (s *LoggingService) Register(ctx context.Context, input RegisterInput) (res
 func (s *LoggingService) Login(ctx context.Context, input LoginInput) (response *LoginResponse, err error) {
 	start := time.Now()
 	defer func() {
-		s.logger.Info(
+		logger := s.logger
+		if response != nil {
+			logger = s.logger.With(slog.Any("response", "Login successful"))
+		} else {
+			logger = s.logger.With(slog.Any("err", err))
+		}
+		logger.Info(
 			"Login",
-			"response", "Login successful",
-			"err", err,
 			"took", time.Since(start).String(),
 		)
 	}()

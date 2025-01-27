@@ -96,12 +96,12 @@ func (db *DB) CreateCustomer(ctx context.Context, input CreateCustomerInput) (*C
 	return newCustomer, nil
 }
 
-func (db *DB) GetCustomersOne(ctx context.Context, input GetCustomersInput) (*CustomerView, error) {
+func (db *DB) GetCustomersOne(ctx context.Context, input GetCustomersInput) (*CustomerSchema, error) {
 	collection := db.DB.Collection("customers")
 
 	filter := input.buildFilter()
 
-	var customer CustomerView
+	var customer CustomerSchema
 	err := collection.FindOne(ctx, filter).Decode(&customer)
 	if err != nil {
 		return nil, err
@@ -110,12 +110,12 @@ func (db *DB) GetCustomersOne(ctx context.Context, input GetCustomersInput) (*Cu
 	return &customer, nil
 }
 
-func (db *DB) GetCustomersMany(ctx context.Context, input GetCustomersInput) (*List[CustomerView], error) {
+func (db *DB) GetCustomersMany(ctx context.Context, input GetCustomersInput) (*List[CustomerSchema], error) {
 	collection := db.DB.Collection("customers")
 
 	filter := input.buildFilter()
 
-	var customers List[CustomerView]
+	var customers List[CustomerSchema]
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
@@ -123,7 +123,7 @@ func (db *DB) GetCustomersMany(ctx context.Context, input GetCustomersInput) (*L
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
-		var customer CustomerView
+		var customer CustomerSchema
 		if err := cursor.Decode(&customer); err != nil {
 			return nil, err
 		}

@@ -52,21 +52,21 @@ func NewAuthService(DB *mongo_util.DB) Service {
 	}
 }
 
-func validate(input RegisterInput) error {
-	if input.Email == "" {
+func (i *RegisterInput) validate() error {
+	if i.Email == "" {
 		return errors.New("email is required")
 	}
 
 	emailRegex := `^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$`
-	if !regexp.MustCompile(emailRegex).MatchString(input.Email) {
+	if !regexp.MustCompile(emailRegex).MatchString(i.Email) {
 		return errors.New("invalid email format")
 	}
 
-	if input.Password == "" {
+	if i.Password == "" {
 		return errors.New("password is required")
 	}
 
-	if len(input.Password) < 6 {
+	if len(i.Password) < 6 {
 		return errors.New("password must be at least 6 characters long")
 	}
 
@@ -74,7 +74,7 @@ func validate(input RegisterInput) error {
 }
 func (s *AuthService) Register(ctx context.Context, input RegisterInput) (*RegisterResponse, error) {
 	// Step 1: Validate input
-	err := validate(input)
+	err := input.validate()
 	if err != nil {
 		return nil, err
 	}
@@ -167,15 +167,80 @@ func (s *AuthService) Register(ctx context.Context, input RegisterInput) (*Regis
 		RefreshToken: refreshToken,
 	}, nil
 }
+func (i *LoginInput) validate() error {
+	if i.Email == "" {
+		return errors.New("email is required")
+	}
 
+	emailRegex := `^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$`
+	if !regexp.MustCompile(emailRegex).MatchString(i.Email) {
+		return errors.New("invalid email format")
+	}
+
+	if i.Password == "" {
+		return errors.New("password is required")
+	}
+
+	if len(i.Password) < 6 {
+		return errors.New("password must be at least 6 characters long")
+	}
+
+	return nil
+}
 func (s *AuthService) Login(ctx context.Context, input LoginInput) (*LoginResponse, error) {
-	_, err := s.DB.GetCustomersMany(ctx, mongo_util.GetCustomersInput{
-		Limit:  100,
-		Offset: 0,
-	})
+	// Step 1: Validate input
+	err := input.validate()
 	if err != nil {
 		return nil, err
 	}
 
-	return &LoginResponse{}, nil
+	existingUser, err := s.DB.GetCustomersOne(ctx, mongo_util.GetCustomersInput{
+		Email: &input.Email,
+	})
+	if err != nil && err != mongo.ErrNoDocuments {
+		return nil, fmt.Errorf("failed to check for existing email: %v", err)
+	}
+	if existingUser == nil {
+		return nil, fmt.Errorf("user not found")
+	}
+
+	if err := utils.ComparePassword(existingUser.Password, input.Password); err != nil {
+		return nil, err
+	}
+
+	session, err := s.DB.CreateSession(ctx, mongo_util.CreateSessionInput{
+		UserID:    existingUser.ID,
+		UserAgent: input.UserAgent,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create session: %v", err)
+	}
+
+	refreshToken, err := utils.SignToken(map[string]interface{}{
+		"sessionId": session.ID,
+	}, &utils.SignOptions{
+		ExpiresIn: utils.AccessTokenExpiry,
+		Secret:    utils.JWTRefreshSecret,
+		Audience:  utils.DefaultAudience,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create refresh token: %v", err)
+	}
+
+	accessToken, err := utils.SignToken(map[string]interface{}{
+		"userId":    existingUser.ID,
+		"sessionId": session.ID,
+	}, &utils.SignOptions{
+		ExpiresIn: utils.AccessTokenExpiry,
+		Secret:    utils.JWTSecret,
+		Audience:  utils.DefaultAudience,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create access token: %v", err)
+	}
+
+	return &LoginResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
 }

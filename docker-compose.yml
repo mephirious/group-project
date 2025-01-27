@@ -1,16 +1,25 @@
 version: '3.8'
 
 services:
-  auth:
-    build: 
-      context: ./services/auth
+  nginx:
+    image: nginx
+    container_name: nginx
     ports:
-      - "5001:5001"
-    depends_on: 
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - auth_service
+
+  auth_service:
+    container_name: auth-service
+    build:
+      context: ./services/auth
+    depends_on:
       - db
     env_file:
       - ./services/auth/.env.prod
-    container_name: auth-service
+
   db:
     image: mongo:latest
     restart: always

@@ -25,8 +25,8 @@ func (s *ApiServer) Start(listenAddr string, prefix string) error {
 		Addr: listenAddr,
 	}
 
-	http.HandleFunc(prefix+"/register", s.registerHandler)
-	http.HandleFunc(prefix+"/login", s.loginHandler)
+	http.HandleFunc("POST "+prefix+"/register", s.registerHandler)
+	http.HandleFunc("POST "+prefix+"/login", s.loginHandler)
 	// http.HandleFunc(prefix+"/logout", s.logoutHandler)
 	// http.HandleFunc(prefix+"/refresh", s.refreshHandler)
 	// http.HandleFunc(prefix+"/email/verify/{verification_code}", s.verifyEmailHandler)
@@ -74,7 +74,7 @@ func (s *ApiServer) registerHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "refresh_token",
 		Value:    response.RefreshToken,
-		Path:     "/api/v1/auth/refresh",
+		Path:     "/api/v1/refresh",
 		HttpOnly: true,
 		Secure:   isSecure,
 		SameSite: http.SameSiteStrictMode,
@@ -91,14 +91,36 @@ func (s *ApiServer) loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := s.svc.Login(context.Background(), input)
+	input.UserAgent = r.UserAgent()
+
+	response, err := s.svc.Login(context.Background(), input)
 	if err != nil {
 		// TODO: Gracefull error handling
 		writeJSON(w, http.StatusConflict, map[string]any{"error": err.Error()})
 		return
 	}
 
-	writeJSON(w, http.StatusOK, users)
+	isSecure := os.Getenv("SERVICE_ENV") == "production"
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    response.AccessToken,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   isSecure,
+		SameSite: http.SameSiteStrictMode,
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    response.RefreshToken,
+		Path:     "/api/v1/refresh",
+		HttpOnly: true,
+		Secure:   isSecure,
+		SameSite: http.SameSiteStrictMode,
+	})
+
+	writeJSON(w, http.StatusOK, "Login successful")
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) error {

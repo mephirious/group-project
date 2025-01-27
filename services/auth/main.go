@@ -22,7 +22,7 @@ func NewConfig() *Config {
 
 	return &Config{
 		PORT:   ":5001",
-		Prefix: "/api/v1",
+		Prefix: "/auth/api/v1",
 	}
 }
 

@@ -2,6 +2,6 @@ server:
   port: 8080
 database:
   uri: "mongodb://localhost:27017"
-  name: "laptopStoreDB"
+  name: "laptopStore"
 logging:
   level: "debug"

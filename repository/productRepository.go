@@ -31,17 +31,15 @@ func NewProductRepository(db *mongo.Database) *productRepository {
 func (p *productRepository) GetAllProducts(ctx context.Context) ([]domain.Product, error) {
 	var products []domain.Product
 
-	cursor, err := p.collection.Find(ctx, bson.M{})
+	cursor, err := p.collection.Find(ctx, bson.D{})
 	if err != nil {
 		return nil, err
 	}
 	defer cursor.Close(ctx)
-
 	err = cursor.All(ctx, &products)
 	if err != nil {
 		return nil, err
 	}
-
 	return products, err
 }
 
@@ -52,6 +50,7 @@ func (p *productRepository) GetProductByID(ctx context.Context, id string) (*dom
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(product)
 
 	return &product, nil
 }

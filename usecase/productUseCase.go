@@ -26,6 +26,10 @@ func NewProductUseCase(repository repository.ProductRepository) *productUseCase 
 	}
 }
 
+func (p *productUseCase) GetAllProducts(ctx context.Context) ([]domain.Product, error) {
+	return p.productRepository.GetAllProducts(ctx)
+}
+
 func (p *productUseCase) GetProductByID(ctx context.Context, id string) (*domain.Product, error) {
 	product, err := p.productRepository.GetProductByID(ctx, id)
 	if err != nil {

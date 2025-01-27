@@ -1,6 +1,9 @@
 package config
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/spf13/viper"
 )
 
@@ -20,7 +23,17 @@ type Config struct {
 func LoadConfig() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("./config")
+
+	currentDir, _ := os.Getwd()
+
+	var configPath string
+	if filepath.Base(currentDir) == "cmd" {
+		configPath = "../config"
+	} else {
+		configPath = "./config"
+	}
+
+	viper.AddConfigPath(configPath)
 
 	err := viper.ReadInConfig()
 	if err != nil {

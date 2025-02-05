@@ -1,130 +1,200 @@
-package main
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const session = require('express-session');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const app = express();
 
-import (
-	"context"
-	"encoding/json"
-	"log"
-	"net/http"
-	"os"
-	"time"
-)
+const PORT = process.env.PORT || 3000;
 
-type ApiServer struct {
-	svc Service
-	srv *http.Server
-}
+// Middleware
+app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: 'secureSecret',
+    resave: false,
+    saveUninitialized: false
+}));
+app.set('view engine', 'ejs');
 
-func NewApiServer(svc Service) *ApiServer {
-	return &ApiServer{
-		svc: svc,
-	}
-}
+// Database Connection
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('MongoDB Connected'))
+    .catch(err => console.error('MongoDB Connection Error:', err));
 
-func (s *ApiServer) Start(listenAddr string, prefix string) error {
-	s.srv = &http.Server{
-		Addr: listenAddr,
-	}
+// User Schema
+const userSchema = new mongoose.Schema({
+    name: String,
+    email: { type: String, unique: true },
+    password: String,
+    resetToken: String,
+    resetTokenExpiry: Date
+});
 
-	http.HandleFunc("POST "+prefix+"/register", s.registerHandler)
-	http.HandleFunc("POST "+prefix+"/login", s.loginHandler)
-	// http.HandleFunc(prefix+"/logout", s.logoutHandler)
-	// http.HandleFunc(prefix+"/refresh", s.refreshHandler)
-	// http.HandleFunc(prefix+"/email/verify/{verification_code}", s.verifyEmailHandler)
-	return s.srv.ListenAndServe()
-}
+const User = mongoose.model('User', userSchema);
 
-func (s *ApiServer) Stop(ctx context.Context) {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
+// Nodemailer Email Configuration
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER, 
+        pass: process.env.EMAIL_PASS  
+    }
+});
 
-	if err := s.srv.Shutdown(ctx); err != nil {
-		log.Println("HTTP server shutdown failed:", err)
-	} else {
-		log.Println("Server stopped gracefully")
-	}
-}
+// Home Page
+app.get('/', (req, res) => {
+    res.render('index');
+});
 
-func (s *ApiServer) registerHandler(w http.ResponseWriter, r *http.Request) {
-	var input RegisterInput
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		writeJSON(w, http.StatusBadRequest, map[string]any{"error": "Invalid JSON body"})
-		return
-	}
+// Register Page
+app.get('/register', (req, res) => {
+    res.render('register');
+});
 
-	input.UserAgent = r.UserAgent()
+// Handle User Registration
+app.post('/register', async (req, res) => {
+    const { name, email, password } = req.body;
 
-	response, err := s.svc.Register(context.Background(), input)
-	if err != nil {
-		writeJSON(w, http.StatusConflict, map[string]any{"error": err.Error()})
-		return
-	}
+    if (!name || !email || !password) {
+        return res.status(400).render('error', { message: 'All fields are required!' });
+    }
 
-	isSecure := os.Getenv("SERVICE_ENV") == "production"
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await User.create({ name, email, password: hashedPassword });
+        res.redirect('/login');
+    } catch (err) {
+        console.error(err);
+        res.status(500).render('error', { message: 'Internal Server Error. Please try again later.' });
+    }
+});
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "access_token",
-		Value:    response.AccessToken,
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   isSecure,
-		SameSite: http.SameSiteStrictMode,
-	})
+// Login Page
+app.get('/login', (req, res) => {
+    res.render('login');
+});
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "refresh_token",
-		Value:    response.RefreshToken,
-		Path:     "/api/v1/refresh",
-		HttpOnly: true,
-		Secure:   isSecure,
-		SameSite: http.SameSiteStrictMode,
-	})
+// Handle User Login
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
 
-	writeJSON(w, http.StatusOK, response.User)
-}
+    if (!email || !password) {
+        return res.status(400).render('error', { message: 'Email and Password are required!' });
+    }
 
-func (s *ApiServer) loginHandler(w http.ResponseWriter, r *http.Request) {
-	var input LoginInput
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
-		writeJSON(w, http.StatusBadRequest, map[string]any{"error": "Invalid JSON body"})
-		return
-	}
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(404).render('error', { message: 'User not found. Please check your email or register a new account.' });
+    }
 
-	input.UserAgent = r.UserAgent()
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        return res.status(401).render('error', { message: 'Invalid credentials. Please try again.' });
+    }
 
-	response, err := s.svc.Login(context.Background(), input)
-	if err != nil {
-		// TODO: Gracefull error handling
-		writeJSON(w, http.StatusConflict, map[string]any{"error": err.Error()})
-		return
-	}
+    req.session.userId = user._id;
+    res.redirect('/dashboard');
+});
 
-	isSecure := os.Getenv("SERVICE_ENV") == "production"
+// Dashboard
+app.get('/dashboard', async (req, res) => {
+    if (!req.session.userId) {
+        return res.status(403).render('error', { message: 'Access Denied! Please log in first.' });
+    }
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "access_token",
-		Value:    response.AccessToken,
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   isSecure,
-		SameSite: http.SameSiteStrictMode,
-	})
+    const user = await User.findById(req.session.userId);
+    res.render('dashboard', { user });
+});
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "refresh_token",
-		Value:    response.RefreshToken,
-		Path:     "/api/v1/refresh",
-		HttpOnly: true,
-		Secure:   isSecure,
-		SameSite: http.SameSiteStrictMode,
-	})
+// Logout
+app.get('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
+});
 
-	writeJSON(w, http.StatusOK, "Login successful")
-}
+// Forgot Password Page
+app.get('/forgot', (req, res) => {
+    res.render('forgot');
+});
 
-func writeJSON(w http.ResponseWriter, status int, v any) error {
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(status)
-	return json.NewEncoder(w).Encode(v)
-}
+// Handle Password Reset Request
+app.post('/forgot', async (req, res) => {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        return res.status(404).render('error', { message: 'User not found. Please enter a registered email.' });
+    }
+
+    // Generate Secure Reset Token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    user.resetToken = resetToken;
+    user.resetTokenExpiry = Date.now() + 3600000; // 1 hour expiry
+    await user.save();
+
+    // Send Reset Email
+    const resetURL = `http://localhost:${PORT}/reset/${resetToken}`;
+    const mailOptions = {
+        to: user.email,
+        subject: 'Password Reset Request',
+        html: `<h3>Password Reset</h3>
+               <p>Click <a href="${resetURL}">here</a> to reset your password.</p>
+               <p>This link is valid for 1 hour.</p>`
+    };
+
+    transporter.sendMail(mailOptions, (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).render('error', { message: 'Error sending email. Try again later.' });
+        }
+        res.render('success', { message: 'Reset link sent! Check your email.' });
+    });
+});
+
+// Reset Password Page
+app.get('/reset/:token', async (req, res) => {
+    const user = await User.findOne({
+        resetToken: req.params.token,
+        resetTokenExpiry: { $gt: Date.now() }
+    });
+
+    if (!user) {
+        return res.status(400).render('error', { message: 'Invalid or expired reset link.' });
+    }
+
+    res.render('reset', { token: req.params.token });
+});
+
+// Handle Password Reset Submission
+app.post('/reset/:token', async (req, res) => {
+    const { password } = req.body;
+    const user = await User.findOne({
+        resetToken: req.params.token,
+        resetTokenExpiry: { $gt: Date.now() }
+    });
+
+    if (!user) {
+        return res.status(400).render('error', { message: 'Invalid or expired reset link.' });
+    }
+
+    user.password = await bcrypt.hash(password, 10);
+    user.resetToken = undefined;
+    user.resetTokenExpiry = undefined;
+    await user.save();
+
+    res.render('success', { message: 'Password reset successful! You can now log in.' });
+});
+
+// 404 Page Not Found
+app.use((req, res) => {
+    res.status(404).render('error', { message: 'Page Not Found! The page you are looking for does not exist.' });
+});
+
+// Start Server
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});

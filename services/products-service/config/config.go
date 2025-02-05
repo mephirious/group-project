@@ -2,49 +2,41 @@ package config
 
 import (
 	"os"
-	"path/filepath"
+	"strconv"
 
-	"github.com/spf13/viper"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
 	Server struct {
-		Port int `mapstructure:"port"`
-	} `mapstructure:"server"`
+		Port int
+	}
 	Database struct {
-		URI  string `mapstructure:"uri"`
-		Name string `mapstructure:"name"`
-	} `mapstructure:"database"`
+		URI  string
+		Name string
+	}
 	Logging struct {
-		Level string `mapstructure:"level"`
-	} `mapstructure:"logging"`
+		Level string
+	}
 }
 
 func LoadConfig() (*Config, error) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-
-	currentDir, _ := os.Getwd()
-
-	var configPath string
-	if filepath.Base(currentDir) == "cmd" {
-		configPath = "../config"
-	} else {
-		configPath = "./config"
-	}
-
-	viper.AddConfigPath(configPath)
-
-	err := viper.ReadInConfig()
+	err := godotenv.Load()
 	if err != nil {
 		return nil, err
 	}
 
-	var config Config
-	err = viper.Unmarshal(&config)
+	config := &Config{}
+
+	port, err := strconv.Atoi(os.Getenv("SERVER_PORT"))
 	if err != nil {
-		return nil, err
+		port = 8080
 	}
 
-	return &config, nil
+	config.Server.Port = port
+	config.Database.URI = os.Getenv("DATABASE_URI")
+	config.Database.Name = os.Getenv("DATABASE_NAME")
+	config.Logging.Level = os.Getenv("LOGGING_LEVEL")
+
+	return config, nil
 }

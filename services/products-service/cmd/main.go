@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mephirious/group-project/services/products-service/api/handler"
+	db "github.com/mephirious/group-project/services/products-service/adapter/mongo"
+	"github.com/mephirious/group-project/services/products-service/api/http/handler"
 	"github.com/mephirious/group-project/services/products-service/config"
-	"github.com/mephirious/group-project/services/products-service/db"
 	"github.com/mephirious/group-project/services/products-service/repository"
 	"github.com/mephirious/group-project/services/products-service/usecase"
 	"golang.org/x/exp/slog"

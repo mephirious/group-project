@@ -1,19 +1,32 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
-	"github.com/mephirious/group-project/services/customer/internal/handlers"
+	"github.com/gin-gonic/gin"
+	"github.com/mephirious/group-project/services/customer/internal/cart"
+	"github.com/mephirious/group-project/services/customer/internal/database"
+	"github.com/mephirious/group-project/services/customer/pkg/logger"
 )
 
 func main() {
-	r := http.NewServeMux()
+	// Инициализируем логгер
+	logger.InitLogger()
+	logger.Log.Info("Starting Cart Service... 🚀")
 
-	r.HandleFunc("POST /customers", handlers.RegisterCustomer)
-	r.HandleFunc("POST /customers/login", handlers.LoginCustomer)
-	// r.HandleFunc("GET /customers/me", handlers.)
+	// Подключаемся к MongoDB
+	database.ConnectMongoDB("mongodb://localhost:27017")
+	logger.Log.Info("Connected to MongoDB")
 
-	log.Println("Server is running on port 8080")
-	http.ListenAndServe(":8080", r)
+	// Инициализируем репозиторий и обработчик
+	repo := cart.NewCartRepository()
+	handler := cart.NewCartHandler(repo)
+
+	// Создаем маршруты
+	r := gin.Default()
+	r.GET("/cart/:user_id", handler.GetCartHandler)
+	r.POST("/cart", handler.AddToCartHandler)
+	r.DELETE("/cart/:user_id/item/:item_id", handler.RemoveFromCartHandler)
+	r.DELETE("/cart/:user_id", handler.ClearCartHandler)
+
+	logger.Log.Info("Cart Service is running on port 8080")
+	r.Run(":8080")
 }

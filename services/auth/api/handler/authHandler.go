@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"context"
@@ -7,14 +7,17 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	domain "github.com/mephirious/group-project/services/auth/domain"
+	_ "github.com/mephirious/group-project/services/auth/service"
 )
 
 type ApiServer struct {
-	svc Service
+	svc domain.Service
 	srv *http.Server
 }
 
-func NewApiServer(svc Service) *ApiServer {
+func NewApiServer(svc domain.Service) *ApiServer {
 	return &ApiServer{
 		svc: svc,
 	}
@@ -45,7 +48,7 @@ func (s *ApiServer) Stop(ctx context.Context) {
 }
 
 func (s *ApiServer) registerHandler(w http.ResponseWriter, r *http.Request) {
-	var input RegisterInput
+	var input domain.RegisterInput
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		writeJSON(w, http.StatusBadRequest, map[string]any{"error": "Invalid JSON body"})
@@ -84,7 +87,7 @@ func (s *ApiServer) registerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *ApiServer) loginHandler(w http.ResponseWriter, r *http.Request) {
-	var input LoginInput
+	var input domain.LoginInput
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		writeJSON(w, http.StatusBadRequest, map[string]any{"error": "Invalid JSON body"})

@@ -1,9 +1,10 @@
-package mongo_util
+package repository
 
 import (
 	"context"
 	"time"
 
+	"github.com/mephirious/group-project/services/auth/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -17,10 +18,10 @@ type (
 
 const EmailVerification string = "email_verification"
 
-func (db *DB) CreateVerificationCode(ctx context.Context, input CreateVerificationCodeInput) (VerificationCodeSchema, error) {
+func (db *DB) CreateVerificationCode(ctx context.Context, input CreateVerificationCodeInput) (domain.VerificationCodeSchema, error) {
 	collection := db.DB.Collection("verification_codes")
 
-	newCode := VerificationCodeSchema{
+	newCode := domain.VerificationCodeSchema{
 		ID:        primitive.NewObjectID().Hex(),
 		UserID:    input.UserID,
 		Type:      input.Type,
@@ -30,7 +31,7 @@ func (db *DB) CreateVerificationCode(ctx context.Context, input CreateVerificati
 
 	_, err := collection.InsertOne(ctx, newCode)
 	if err != nil {
-		return VerificationCodeSchema{}, err
+		return domain.VerificationCodeSchema{}, err
 	}
 
 	return newCode, nil

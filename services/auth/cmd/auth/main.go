@@ -7,7 +7,9 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/mephirious/group-project/services/authorization/mongo_util"
+	h "github.com/mephirious/group-project/services/auth/api/handler"
+	m "github.com/mephirious/group-project/services/auth/db/mongo"
+	s "github.com/mephirious/group-project/services/auth/service"
 )
 
 type Config struct {
@@ -36,7 +38,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	db, err := mongo_util.NewDB(ctx)
+	db, err := m.NewDB(ctx)
 	if err != nil {
 		log.Fatal("Error creating DB")
 	}
@@ -46,10 +48,10 @@ func main() {
 		}
 	}()
 
-	svc := NewAuthService(db)
-	svc = NewLoggingService(logger, svc)
+	svc := s.NewAuthService(db)
+	svc = s.NewLoggingService(logger, svc)
 
-	ApiServer := NewApiServer(svc)
+	ApiServer := h.NewApiServer(svc)
 	log.Fatal(ApiServer.Start(cfg.PORT, cfg.Prefix))
 
 	signalChan := make(chan os.Signal, 1)

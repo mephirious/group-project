@@ -1,4 +1,4 @@
-package mongo_util
+package db
 
 import (
 	"context"
@@ -6,21 +6,12 @@ import (
 	"log"
 	"os"
 
+	"github.com/mephirious/group-project/services/auth/db/mongo/repository"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type DB struct {
-	Client *mongo.Client
-	DB     *mongo.Database
-}
-
-type List[T any] struct {
-	Total    int64
-	Elements []T
-}
-
-func NewDB(ctx context.Context) (*DB, error) {
+func NewDB(ctx context.Context) (*repository.DB, error) {
 	mongoURI := os.Getenv("MONGO_URI")
 	if mongoURI == "" {
 		log.Fatal("MONGO_URI not set in .env file")
@@ -35,12 +26,5 @@ func NewDB(ctx context.Context) (*DB, error) {
 		log.Fatal("MONGO_DB_NAME not set in .env file")
 	}
 
-	return &DB{Client: client, DB: client.Database(databaseName)}, nil
-}
-
-func (db *DB) Close(ctx context.Context) error {
-	if err := db.Client.Disconnect(ctx); err != nil {
-		return err
-	}
-	return nil
+	return &repository.DB{Client: client, DB: client.Database(databaseName)}, nil
 }

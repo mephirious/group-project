@@ -1,4 +1,4 @@
-module github.com/mephirious/group-project/services/authorization
+module github.com/mephirious/group-project/services/auth
 
 go 1.23.0
 

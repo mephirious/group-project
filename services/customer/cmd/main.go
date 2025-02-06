@@ -22,8 +22,9 @@ func main() {
 
 	// Создаем маршруты
 	r := gin.Default()
-	r.GET("/cart/:user_id", handler.GetCartHandler)
 	r.POST("/cart", handler.AddToCartHandler)
+	r.GET("/cart/:user_id", handler.GetCartHandler)
+	r.PUT("/cart/:user_id/item/:item_id", handler.UpdateCartItemHandler)
 	r.DELETE("/cart/:user_id/item/:item_id", handler.RemoveFromCartHandler)
 	r.DELETE("/cart/:user_id", handler.ClearCartHandler)
 

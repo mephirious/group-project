@@ -31,7 +31,7 @@ func (s *ApiServer) Start(listenAddr string, prefix string) error {
 	http.HandleFunc("POST "+prefix+"/register", s.registerHandler)
 	http.HandleFunc("POST "+prefix+"/login", s.loginHandler)
 	http.HandleFunc("GET "+prefix+"/logout", s.logoutHandler)
-	// http.HandleFunc(prefix+"/refresh", s.refreshHandler)
+	http.HandleFunc("GET "+prefix+"/refresh", s.refreshHandler)
 	// http.HandleFunc(prefix+"/email/verify/{verification_code}", s.verifyEmailHandler)
 	return s.srv.ListenAndServe()
 }
@@ -77,7 +77,7 @@ func (s *ApiServer) registerHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "refresh_token",
 		Value:    response.RefreshToken,
-		Path:     "/api/v1/refresh",
+		Path:     "/auth/api/v1/refresh",
 		HttpOnly: true,
 		Secure:   isSecure,
 		SameSite: http.SameSiteStrictMode,
@@ -117,7 +117,7 @@ func (s *ApiServer) loginHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "refresh_token",
 		Value:    response.RefreshToken,
-		Path:     "/api/v1/refresh",
+		Path:     "/auth/api/v1/refresh",
 		HttpOnly: true,
 		Secure:   isSecure,
 		SameSite: http.SameSiteStrictMode,
@@ -153,11 +153,50 @@ func (s *ApiServer) logoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "refresh_token",
 		Value:    "",
-		Path:     "/api/v1/refresh",
+		Path:     "/auth/api/v1/refresh",
 		HttpOnly: true,
 		Secure:   os.Getenv("SERVICE_ENV") == "production",
 		MaxAge:   -1,
 	})
+
+	writeJSON(w, http.StatusOK, map[string]any{"message": response.Message})
+}
+
+func (s *ApiServer) refreshHandler(w http.ResponseWriter, r *http.Request) {
+	refreshToken, err := r.Cookie("refresh_token")
+	if err != nil {
+		writeJSON(w, http.StatusUnauthorized, map[string]any{"error": "Missing refresh token"})
+		return
+	}
+	response, err := s.svc.RefreshUserAccessToken(context.Background(), domain.RefreshInput{
+		RefreshToken: refreshToken.Value,
+	})
+	if err != nil {
+		writeJSON(w, http.StatusUnauthorized, map[string]any{"error": err.Error()})
+		return
+	}
+
+	isSecure := os.Getenv("SERVICE_ENV") == "production"
+	
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    response.AccessToken,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   isSecure,
+		SameSite: http.SameSiteStrictMode,
+	})
+
+	if response.RefreshToken != "" {
+		http.SetCookie(w, &http.Cookie{
+			Name:     "refresh_token",
+			Value:    response.RefreshToken,
+			Path:     "/auth/api/v1/refresh",
+			HttpOnly: true,
+			Secure:   isSecure,
+			SameSite: http.SameSiteStrictMode,
+		})
+	}
 
 	writeJSON(w, http.StatusOK, map[string]any{"message": response.Message})
 }

@@ -35,6 +35,9 @@ type (
 	LogoutResponse struct {
 		Message string `json:"message"`
 	}
+	RefreshInput struct {
+		RefreshToken string
+	}
 )
 
 type List[T any] struct {
@@ -46,6 +49,7 @@ type Service interface {
 	Register(context.Context, RegisterInput) (*RegisterResponse, error)
 	Login(context.Context, LoginInput) (*LoginResponse, error)
 	Logout(context.Context, LogoutInput) (*LogoutResponse, error)
+	RefreshUserAccessToken(context.Context, RefreshInput) (*LoginResponse, error)
 }
 
 func (i *LoginInput) Validate() error {

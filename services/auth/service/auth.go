@@ -192,3 +192,63 @@ func (s *AuthService) Logout(ctx context.Context, input domain.LogoutInput) (*do
 		Message: "Logout successfult",
 	}, nil
 }
+
+func (s *AuthService) RefreshUserAccessToken(ctx context.Context, input domain.RefreshInput) (*domain.LoginResponse, error) {
+	// Verify the token
+	claims, err := utils.VerifyToken[utils.RefreshTokenPayload](input.RefreshToken, utils.JWTRefreshSecret)
+	if err != nil {
+		return nil, err
+	}
+
+	session, err := s.DB.GetSessionOne(ctx, repository.GetSessionsInput{
+		ID: &claims.SessionID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	now := time.Now()
+	if now.After(session.ExpiresAt) {
+		return nil, fmt.Errorf("Session expired")
+	}
+
+	// Refresh session if it expires in the next 24 hours
+	var newRefreshToken string
+	if session.ExpiresAt.Sub(now) <= 1*time.Hour {
+		session.ExpiresAt = now.Add(utils.RefreshTokenExpiry)
+		err := s.DB.UpdateSessionExpiry(ctx, session.ID, session.ExpiresAt)
+		if err != nil {
+			return nil, fmt.Errorf("failed to update session expiry: %v", err)
+		}
+
+		refreshToken, err := utils.SignToken(map[string]interface{}{
+			"sessionId": session.ID,
+		}, &utils.SignOptions{
+			ExpiresIn: utils.RefreshTokenExpiry,
+			Secret:    utils.JWTRefreshSecret,
+			Audience:  utils.DefaultAudience,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to create refresh token: %v", err)
+		}
+		newRefreshToken = refreshToken
+	}
+
+	accessToken, err := utils.SignToken(map[string]interface{}{
+		"userId":    session.UserID,
+		"sessionId": session.ID,
+	}, &utils.SignOptions{
+		ExpiresIn: utils.AccessTokenExpiry,
+		Secret:    utils.JWTSecret,
+		Audience:  utils.DefaultAudience,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create access token: %v", err)
+	}
+
+	return &domain.LoginResponse{
+		Message:      "Access token refreshed",
+		AccessToken:  accessToken,
+		RefreshToken: newRefreshToken,
+	}, nil
+}

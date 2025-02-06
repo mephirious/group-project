@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/mephirious/group-project/services/auth/domain"
+	"github.com/mephirious/group-project/services/auth/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -56,7 +58,7 @@ func (db *DB) CreateSession(ctx context.Context, input CreateSessionInput) (*dom
 		ID:        primitive.NewObjectID().Hex(),
 		UserID:    input.UserID,
 		UserAgent: input.UserAgent,
-		ExpiresAt: time.Now().AddDate(0, 0, 30),
+		ExpiresAt: time.Now().Add(utils.RefreshTokenExpiry),
 		CreatedAt: time.Now(),
 	}
 
@@ -80,6 +82,23 @@ func (db *DB) GetSessionOne(ctx context.Context, input GetSessionsInput) (*domai
 	}
 
 	return &session, nil
+}
+
+func (db *DB) UpdateSessionExpiry(ctx context.Context, sessionID string, expiresAt time.Time) error {
+	collection := db.DB.Collection("sessions")
+	filter := bson.M{"_id": sessionID}
+	update := bson.M{"$set": bson.M{"expires_at": expiresAt}}
+
+	result, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
+	}
+
+	if result.MatchedCount == 0 {
+		return fmt.Errorf("session not found")
+	}
+
+	return nil
 }
 
 func (db *DB) DeleteSession(ctx context.Context, sessionID string) error {

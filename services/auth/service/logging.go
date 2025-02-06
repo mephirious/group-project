@@ -70,3 +70,20 @@ func (s *LoggingService) Logout(ctx context.Context, input domain.LogoutInput) (
 	}()
 	return s.next.Logout(ctx, input)
 }
+
+func (s *LoggingService) RefreshUserAccessToken(ctx context.Context, input domain.RefreshInput) (response *domain.LoginResponse, err error) {
+	start := time.Now()
+	defer func() {
+		logger := s.logger
+		if response != nil {
+			logger = s.logger.With(slog.Any("response", response.Message))
+		} else {
+			logger = s.logger.With(slog.Any("err", err))
+		}
+		logger.Info(
+			"Login",
+			"took", time.Since(start).String(),
+		)
+	}()
+	return s.next.RefreshUserAccessToken(ctx, input)
+}

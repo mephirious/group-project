@@ -16,7 +16,7 @@ var (
 	JWTRefreshSecret   = ""
 	DefaultAudience    = "user"
 	AccessTokenExpiry  = 15 * time.Minute
-	RefreshTokenExpiry = 30 * 24 * time.Hour
+	RefreshTokenExpiry = 25 * time.Hour
 )
 
 type AccessTokenPayload struct {

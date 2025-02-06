@@ -81,3 +81,13 @@ func (db *DB) GetSessionOne(ctx context.Context, input GetSessionsInput) (*domai
 
 	return &session, nil
 }
+
+func (db *DB) DeleteSession(ctx context.Context, sessionID string) error {
+	collection := db.DB.Collection("sessions")
+	filter := bson.M{"_id": sessionID}
+	_, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return err
+	}
+	return nil
+}

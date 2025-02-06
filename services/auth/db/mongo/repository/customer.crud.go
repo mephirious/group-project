@@ -14,6 +14,7 @@ type (
 	CreateCustomerInput struct {
 		Email     string
 		Password  string
+		Username  *string
 		FirstName *string
 		LastName  *string
 		Phone     *string
@@ -27,6 +28,7 @@ type (
 		FirstName *string
 		LastName  *string
 		Email     *string
+		Username  *string
 		Phone     *string
 		CreatedAt *time.Time
 		UpdatedAt *time.Time
@@ -39,6 +41,9 @@ func (c GetCustomersInput) buildFilter() bson.M {
 
 	if c.ID != nil {
 		filter["_id"] = *c.ID
+	}
+	if c.Username != nil {
+		filter["username"] = *c.Username
 	}
 	if c.FirstName != nil {
 		filter["first_name"] = *c.FirstName
@@ -77,6 +82,9 @@ func (db *DB) CreateCustomer(ctx context.Context, input CreateCustomerInput) (*d
 	}
 
 	// Set optional fields if provided
+	if input.Username != nil && *input.Username != "" {
+		newCustomer.Username = *input.Username
+	}
 	if input.Phone != nil && *input.Phone != "" {
 		newCustomer.Phone = *input.Phone
 	}

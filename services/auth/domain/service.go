@@ -25,8 +25,15 @@ type (
 		UserAgent string
 	}
 	LoginResponse struct {
+		Message      string `json:"message"`
 		AccessToken  string `json:"accessToken"`
 		RefreshToken string `json:"refreshToken"`
+	}
+	LogoutInput struct {
+		AccessToken string
+	}
+	LogoutResponse struct {
+		Message string `json:"message"`
 	}
 )
 
@@ -38,6 +45,7 @@ type List[T any] struct {
 type Service interface {
 	Register(context.Context, RegisterInput) (*RegisterResponse, error)
 	Login(context.Context, LoginInput) (*LoginResponse, error)
+	Logout(context.Context, LogoutInput) (*LogoutResponse, error)
 }
 
 func (i *LoginInput) Validate() error {

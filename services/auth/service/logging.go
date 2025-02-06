@@ -42,7 +42,7 @@ func (s *LoggingService) Login(ctx context.Context, input domain.LoginInput) (re
 	defer func() {
 		logger := s.logger
 		if response != nil {
-			logger = s.logger.With(slog.Any("response", "Login successful"))
+			logger = s.logger.With(slog.Any("response", response.Message))
 		} else {
 			logger = s.logger.With(slog.Any("err", err))
 		}
@@ -52,4 +52,21 @@ func (s *LoggingService) Login(ctx context.Context, input domain.LoginInput) (re
 		)
 	}()
 	return s.next.Login(ctx, input)
+}
+
+func (s *LoggingService) Logout(ctx context.Context, input domain.LogoutInput) (response *domain.LogoutResponse, err error) {
+	start := time.Now()
+	defer func() {
+		logger := s.logger
+		if response != nil {
+			logger = s.logger.With(slog.Any("response", response.Message))
+		} else {
+			logger = s.logger.With(slog.Any("err", err))
+		}
+		logger.Info(
+			"Logout",
+			"took", time.Since(start).String(),
+		)
+	}()
+	return s.next.Logout(ctx, input)
 }

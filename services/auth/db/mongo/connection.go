@@ -25,6 +25,7 @@ func NewDB(ctx context.Context) (*repository.DB, error) {
 	if databaseName == "" {
 		log.Fatal("MONGO_DB_NAME not set in .env file")
 	}
+	log.Println("connected to MongoDB")
 
 	return &repository.DB{Client: client, DB: client.Database(databaseName)}, nil
 }

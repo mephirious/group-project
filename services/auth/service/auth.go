@@ -171,7 +171,24 @@ func (s *AuthService) Login(ctx context.Context, input domain.LoginInput) (*doma
 	}
 
 	return &domain.LoginResponse{
+		Message:      "Login successful",
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+	}, nil
+}
+
+func (s *AuthService) Logout(ctx context.Context, input domain.LogoutInput) (*domain.LogoutResponse, error) {
+	// Verify the token
+	claims, err := utils.VerifyToken[utils.AccessTokenPayload](input.AccessToken, utils.JWTSecret)
+	if err != nil {
+		return nil, err
+	}
+	// Extract session ID from token and remove session from DB
+	err = s.DB.DeleteSession(ctx, claims.SessionID)
+	if err != nil {
+		fmt.Println("Failed to delete session:", err)
+	}
+	return &domain.LogoutResponse{
+		Message: "Logout successfult",
 	}, nil
 }

@@ -17,6 +17,7 @@ type CustomerView struct {
 type CustomerSchema struct {
 	ID        string    `bson:"_id"`
 	Email     string    `bson:"email"`
+	Username  string    `bson:"username"`
 	Password  string    `bson:"password"`
 	FirstName string    `bson:"first_name,omitempty"`
 	LastName  string    `bson:"last_name,omitempty"`

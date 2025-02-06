@@ -38,9 +38,12 @@ func main() {
 	database := client.Database(cfg.Database.Name)
 	brandRepository := repository.NewBrandRepository(database)
 	brandUseCase := usecase.NewBrandUseCase(brandRepository)
+	categoryRepository := repository.NewCategoryRepository(database)
+	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository)
 
 	router := gin.Default()
 	handler.NewBrandHandler(router, brandUseCase)
+	handler.NewCategoryHandler(router, categoryUseCase)
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 

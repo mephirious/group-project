@@ -24,6 +24,7 @@ func NewBrandHandler(router *gin.Engine, useCase usecase.BrandUseCase) {
 
 	router.GET("/brands", handler.GetAllBrands)
 	router.GET("/brands/:id", handler.GetBrandByID)
+	router.GET("/brands/name/:name", handler.GetBrandByName)
 	router.POST("/brands", handler.CreateBrand)
 	router.PUT("/brands/:id", handler.UpdateBrand)
 	router.DELETE("/brands/:id", handler.DeleteBrand)
@@ -51,6 +52,26 @@ func (b *BrandHandler) GetBrandByID(c *gin.Context) {
 	}
 
 	brand, err := b.useCase.GetBrandByID(c.Request.Context(), objID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", c.Request.Method, err))
+		return
+	}
+
+	if brand == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Brand not found"})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", c.Request.Method, err))
+		return
+	}
+
+	c.JSON(http.StatusOK, brand)
+	slog.Info(fmt.Sprintf("Method %s finished successfully", c.Request.Method))
+}
+
+func (b *BrandHandler) GetBrandByName(c *gin.Context) {
+	name := c.Param("name")
+
+	brand, err := b.useCase.GetBrandByName(c.Request.Context(), name)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		slog.Error(fmt.Sprintf("Method %s failed: %s", c.Request.Method, err))

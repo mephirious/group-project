@@ -14,6 +14,7 @@ import (
 type BrandRepository interface {
 	GetAllBrands(ctx context.Context) ([]domain.Brand, error)
 	GetBrandByID(ctx context.Context, id primitive.ObjectID) (*domain.Brand, error)
+	GetBrandByName(ctx context.Context, name string) (*domain.Brand, error)
 	CreateBrand(ctx context.Context, brand *domain.Brand) error
 	UpdateBrand(ctx context.Context, brand *domain.Brand) error
 	DeleteBrand(ctx context.Context, id primitive.ObjectID) error
@@ -55,6 +56,28 @@ func (b *brandRepository) GetBrandByID(ctx context.Context, id primitive.ObjectI
 	}
 
 	fmt.Println(brand)
+	return &brand, nil
+}
+
+func (b *brandRepository) GetBrandByName(ctx context.Context, name string) (*domain.Brand, error) {
+	regexPattern := bson.M{
+		"$regex":   name,
+		"$options": "i",
+	}
+
+	filter := bson.M{
+		"brand_name": regexPattern,
+	}
+
+	var brand domain.Brand
+	err := b.collection.FindOne(ctx, filter).Decode(&brand)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, err
+	}
+
 	return &brand, nil
 }
 

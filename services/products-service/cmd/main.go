@@ -36,11 +36,11 @@ func main() {
 	defer db.DisconnectFromMongoDB(ctx, client)
 
 	database := client.Database(cfg.Database.Name)
-	productRepository := repository.NewProductRepository(database)
-	productUseCase := usecase.NewProductUseCase(productRepository)
+	brandRepository := repository.NewBrandRepository(database)
+	brandUseCase := usecase.NewBrandUseCase(brandRepository)
 
 	router := gin.Default()
-	handler.NewProductHandler(router, productUseCase)
+	handler.NewBrandHandler(router, brandUseCase)
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 

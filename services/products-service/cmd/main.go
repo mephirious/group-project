@@ -44,12 +44,15 @@ func main() {
 	typeUseCase := usecase.NewTypeUseCase(typeRepository)
 	inventoryRepository := repository.NewInventoryRepository(database)
 	inventoryUseCase := usecase.NewInventoryUseCase(inventoryRepository)
+	productRepository := repository.NewProductRepository(database)
+	productUseCase := usecase.NewProductUseCase(productRepository)
 
 	router := gin.Default()
 	handler.NewBrandHandler(router, brandUseCase)
 	handler.NewCategoryHandler(router, categoryUseCase)
 	handler.NewTypeHandler(router, typeUseCase)
 	handler.NewInventoryHandler(router, inventoryUseCase)
+	handler.NewProductHandler(router, productUseCase)
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 

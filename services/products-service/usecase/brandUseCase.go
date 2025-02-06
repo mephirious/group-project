@@ -55,6 +55,14 @@ func (b *brandUseCase) GetBrandByName(ctx context.Context, name string) (*domain
 }
 
 func (b *brandUseCase) CreateBrand(ctx context.Context, brand *domain.Brand) error {
+	existingBrand, err := b.brandRepository.GetBrandByName(ctx, brand.BrandName)
+	if err != nil {
+		return err
+	}
+	if existingBrand != nil {
+		return errors.New("brand already exists")
+	}
+
 	return b.brandRepository.CreateBrand(ctx, brand)
 }
 

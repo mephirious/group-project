@@ -1,11 +1,11 @@
-package mongo_util
+package domain
 
 import "time"
 
-type VerificationCodeSchema struct {
+type SessionSchema struct {
 	ID        string    `bson:"_id"`
 	UserID    string    `bson:"userId"`
-	Type      string    `bson:"type"`
+	UserAgent string    `bson:"user_agent"`
 	ExpiresAt time.Time `bson:"expires_at"`
 	CreatedAt time.Time `bson:"created_at"`
 }

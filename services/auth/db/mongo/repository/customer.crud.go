@@ -1,10 +1,11 @@
-package mongo_util
+package repository
 
 import (
 	"context"
 	"fmt"
 	"time"
 
+	"github.com/mephirious/group-project/services/auth/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -64,9 +65,9 @@ func (c GetCustomersInput) buildFilter() bson.M {
 	return filter
 }
 
-func (db *DB) CreateCustomer(ctx context.Context, input CreateCustomerInput) (*CustomerSchema, error) {
+func (db *DB) CreateCustomer(ctx context.Context, input CreateCustomerInput) (*domain.CustomerSchema, error) {
 	// Generate a unique ID for the new customer
-	newCustomer := &CustomerSchema{
+	newCustomer := &domain.CustomerSchema{
 		ID:        primitive.NewObjectID().Hex(),
 		Email:     input.Email,
 		Password:  input.Password,
@@ -96,12 +97,12 @@ func (db *DB) CreateCustomer(ctx context.Context, input CreateCustomerInput) (*C
 	return newCustomer, nil
 }
 
-func (db *DB) GetCustomersOne(ctx context.Context, input GetCustomersInput) (*CustomerSchema, error) {
+func (db *DB) GetCustomersOne(ctx context.Context, input GetCustomersInput) (*domain.CustomerSchema, error) {
 	collection := db.DB.Collection("customers")
 
 	filter := input.buildFilter()
 
-	var customer CustomerSchema
+	var customer domain.CustomerSchema
 	err := collection.FindOne(ctx, filter).Decode(&customer)
 	if err != nil {
 		return nil, err
@@ -110,12 +111,12 @@ func (db *DB) GetCustomersOne(ctx context.Context, input GetCustomersInput) (*Cu
 	return &customer, nil
 }
 
-func (db *DB) GetCustomersMany(ctx context.Context, input GetCustomersInput) (*List[CustomerSchema], error) {
+func (db *DB) GetCustomersMany(ctx context.Context, input GetCustomersInput) (*domain.List[domain.CustomerSchema], error) {
 	collection := db.DB.Collection("customers")
 
 	filter := input.buildFilter()
 
-	var customers List[CustomerSchema]
+	var customers domain.List[domain.CustomerSchema]
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
@@ -123,7 +124,7 @@ func (db *DB) GetCustomersMany(ctx context.Context, input GetCustomersInput) (*L
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
-		var customer CustomerSchema
+		var customer domain.CustomerSchema
 		if err := cursor.Decode(&customer); err != nil {
 			return nil, err
 		}

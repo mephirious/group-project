@@ -1,9 +1,10 @@
-package mongo_util
+package repository
 
 import (
 	"context"
 	"time"
 
+	"github.com/mephirious/group-project/services/auth/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -48,10 +49,10 @@ func (c GetSessionsInput) buildFilter() bson.M {
 	return filter
 }
 
-func (db *DB) CreateSession(ctx context.Context, input CreateSessionInput) (*SessionSchema, error) {
+func (db *DB) CreateSession(ctx context.Context, input CreateSessionInput) (*domain.SessionSchema, error) {
 	collection := db.DB.Collection("sessions")
 
-	newSession := SessionSchema{
+	newSession := domain.SessionSchema{
 		ID:        primitive.NewObjectID().Hex(),
 		UserID:    input.UserID,
 		UserAgent: input.UserAgent,
@@ -67,12 +68,12 @@ func (db *DB) CreateSession(ctx context.Context, input CreateSessionInput) (*Ses
 	return &newSession, nil
 }
 
-func (db *DB) GetSessionOne(ctx context.Context, input GetSessionsInput) (*SessionSchema, error) {
+func (db *DB) GetSessionOne(ctx context.Context, input GetSessionsInput) (*domain.SessionSchema, error) {
 	collection := db.DB.Collection("sessions")
 
 	filter := input.buildFilter()
 
-	var session SessionSchema
+	var session domain.SessionSchema
 	err := collection.FindOne(ctx, filter).Decode(&session)
 	if err != nil {
 		return nil, err

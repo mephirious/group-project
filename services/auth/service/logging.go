@@ -1,24 +1,26 @@
-package main
+package service
 
 import (
 	"context"
 	"log/slog"
 	"time"
+
+	domain "github.com/mephirious/group-project/services/auth/domain"
 )
 
 type LoggingService struct {
 	logger *slog.Logger
-	next   Service
+	next   domain.Service
 }
 
-func NewLoggingService(logger *slog.Logger, next Service) Service {
+func NewLoggingService(logger *slog.Logger, next domain.Service) domain.Service {
 	return &LoggingService{
 		logger: logger,
 		next:   next,
 	}
 }
 
-func (s *LoggingService) Register(ctx context.Context, input RegisterInput) (response *RegisterResponse, err error) {
+func (s *LoggingService) Register(ctx context.Context, input domain.RegisterInput) (response *domain.RegisterResponse, err error) {
 	start := time.Now()
 	defer func() {
 		logger := s.logger
@@ -35,7 +37,7 @@ func (s *LoggingService) Register(ctx context.Context, input RegisterInput) (res
 	return s.next.Register(ctx, input)
 }
 
-func (s *LoggingService) Login(ctx context.Context, input LoginInput) (response *LoginResponse, err error) {
+func (s *LoggingService) Login(ctx context.Context, input domain.LoginInput) (response *domain.LoginResponse, err error) {
 	start := time.Now()
 	defer func() {
 		logger := s.logger

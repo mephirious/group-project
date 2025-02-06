@@ -1,86 +1,36 @@
-package main
+package service
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
-	"regexp"
 	"time"
 
-	"github.com/mephirious/group-project/services/authorization/mongo_util"
-	"github.com/mephirious/group-project/services/authorization/utils"
+	"github.com/mephirious/group-project/services/auth/db/mongo/repository"
+	"github.com/mephirious/group-project/services/auth/domain"
+	"github.com/mephirious/group-project/services/auth/utils"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type (
-	RegisterInput struct {
-		Email     string  `json:"email"`
-		Password  string  `json:"password"`
-		FirstName *string `json:"first_name"`
-		LastName  *string `json:"last_name"`
-		UserAgent string
-	}
-	RegisterResponse struct {
-		User         mongo_util.CustomerView `json:"user"`
-		AccessToken  string                  `json:"accessToken"`
-		RefreshToken string                  `json:"refreshToken"`
-	}
-	LoginInput struct {
-		Email     string `json:"email"`
-		Password  string `json:"password"`
-		UserAgent string
-	}
-	LoginResponse struct {
-		AccessToken  string `json:"accessToken"`
-		RefreshToken string `json:"refreshToken"`
-	}
-)
-
-type Service interface {
-	Register(context.Context, RegisterInput) (*RegisterResponse, error)
-	Login(context.Context, LoginInput) (*LoginResponse, error)
-}
-
 type AuthService struct {
-	DB *mongo_util.DB
+	DB *repository.DB
 }
 
-func NewAuthService(DB *mongo_util.DB) Service {
+func NewAuthService(DB *repository.DB) domain.Service {
 	return &AuthService{
 		DB: DB,
 	}
 }
 
-func (i *RegisterInput) validate() error {
-	if i.Email == "" {
-		return errors.New("email is required")
-	}
-
-	emailRegex := `^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$`
-	if !regexp.MustCompile(emailRegex).MatchString(i.Email) {
-		return errors.New("invalid email format")
-	}
-
-	if i.Password == "" {
-		return errors.New("password is required")
-	}
-
-	if len(i.Password) < 6 {
-		return errors.New("password must be at least 6 characters long")
-	}
-
-	return nil
-}
-func (s *AuthService) Register(ctx context.Context, input RegisterInput) (*RegisterResponse, error) {
+func (s *AuthService) Register(ctx context.Context, input domain.RegisterInput) (*domain.RegisterResponse, error) {
 	// Step 1: Validate input
-	err := input.validate()
+	err := input.Validate()
 	if err != nil {
 		return nil, err
 	}
 
 	// Step 2: Check if email already exists
-	existingUser, err := s.DB.GetCustomersOne(ctx, mongo_util.GetCustomersInput{
+	existingUser, err := s.DB.GetCustomersOne(ctx, repository.GetCustomersInput{
 		Email: &input.Email,
 	})
 	if err != nil && err != mongo.ErrNoDocuments {
@@ -97,7 +47,7 @@ func (s *AuthService) Register(ctx context.Context, input RegisterInput) (*Regis
 	}
 
 	// Step 4: Create user in the database
-	newCustomer, err := s.DB.CreateCustomer(ctx, mongo_util.CreateCustomerInput{
+	newCustomer, err := s.DB.CreateCustomer(ctx, repository.CreateCustomerInput{
 		Email:    input.Email,
 		Password: hashedPassword,
 	})
@@ -106,9 +56,9 @@ func (s *AuthService) Register(ctx context.Context, input RegisterInput) (*Regis
 	}
 
 	// Step 5: Create a verification code
-	verificationCode, err := s.DB.CreateVerificationCode(ctx, mongo_util.CreateVerificationCodeInput{
+	verificationCode, err := s.DB.CreateVerificationCode(ctx, repository.CreateVerificationCodeInput{
 		UserID:    newCustomer.ID,
-		Type:      mongo_util.EmailVerification,
+		Type:      repository.EmailVerification,
 		ExpiresAt: time.Now().AddDate(1, 0, 0),
 	})
 	if err != nil {
@@ -119,7 +69,7 @@ func (s *AuthService) Register(ctx context.Context, input RegisterInput) (*Regis
 	fmt.Println("Verification URL:", verificationURL)
 
 	// Step 6: Create a session
-	session, err := s.DB.CreateSession(ctx, mongo_util.CreateSessionInput{
+	session, err := s.DB.CreateSession(ctx, repository.CreateSessionInput{
 		UserID:    newCustomer.ID,
 		UserAgent: input.UserAgent,
 	})
@@ -152,8 +102,8 @@ func (s *AuthService) Register(ctx context.Context, input RegisterInput) (*Regis
 	}
 
 	// Step 8: Return the user details and tokens
-	return &RegisterResponse{
-		User: mongo_util.CustomerView{
+	return &domain.RegisterResponse{
+		User: domain.CustomerView{
 			ID:       newCustomer.ID,
 			Email:    newCustomer.Email,
 			Verified: newCustomer.Verified,
@@ -167,34 +117,15 @@ func (s *AuthService) Register(ctx context.Context, input RegisterInput) (*Regis
 		RefreshToken: refreshToken,
 	}, nil
 }
-func (i *LoginInput) validate() error {
-	if i.Email == "" {
-		return errors.New("email is required")
-	}
 
-	emailRegex := `^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$`
-	if !regexp.MustCompile(emailRegex).MatchString(i.Email) {
-		return errors.New("invalid email format")
-	}
-
-	if i.Password == "" {
-		return errors.New("password is required")
-	}
-
-	if len(i.Password) < 6 {
-		return errors.New("password must be at least 6 characters long")
-	}
-
-	return nil
-}
-func (s *AuthService) Login(ctx context.Context, input LoginInput) (*LoginResponse, error) {
+func (s *AuthService) Login(ctx context.Context, input domain.LoginInput) (*domain.LoginResponse, error) {
 	// Step 1: Validate input
-	err := input.validate()
+	err := input.Validate()
 	if err != nil {
 		return nil, err
 	}
 
-	existingUser, err := s.DB.GetCustomersOne(ctx, mongo_util.GetCustomersInput{
+	existingUser, err := s.DB.GetCustomersOne(ctx, repository.GetCustomersInput{
 		Email: &input.Email,
 	})
 	if err != nil && err != mongo.ErrNoDocuments {
@@ -208,7 +139,7 @@ func (s *AuthService) Login(ctx context.Context, input LoginInput) (*LoginRespon
 		return nil, err
 	}
 
-	session, err := s.DB.CreateSession(ctx, mongo_util.CreateSessionInput{
+	session, err := s.DB.CreateSession(ctx, repository.CreateSessionInput{
 		UserID:    existingUser.ID,
 		UserAgent: input.UserAgent,
 	})
@@ -239,7 +170,7 @@ func (s *AuthService) Login(ctx context.Context, input LoginInput) (*LoginRespon
 		return nil, fmt.Errorf("failed to create access token: %v", err)
 	}
 
-	return &LoginResponse{
+	return &domain.LoginResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}, nil

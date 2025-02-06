@@ -1,22 +1,35 @@
 package domain
 
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
 type Product struct {
-	ID             string         `json:"_id" bson:"_id"`
-	Name           string         `json:"name" bson:"name"`
-	Brand          string         `json:"brand" bson:"brand"`
-	CategoryID     string         `json:"category_id" bson:"category_id"`
-	Price          float64        `json:"price" bson:"price"`
-	Stock          int            `json:"stock" bson:"stock"`
-	Specifications Specifications `json:"specifications" bson:"specifications"`
-	CreatedAt      string         `json:"created_at" bson:"created_at"`
-	UpdatedAt      string         `json:"updated_at" bson:"updated_at"`
+	ID             primitive.ObjectID `bson:"_id,omitempty"`
+	ModelName      string             `bson:"model_name"`
+	CategoryID     primitive.ObjectID `bson:"category_id"`
+	BrandID        primitive.ObjectID `bson:"brand_id"`
+	TypeID         primitive.ObjectID `bson:"type_id"`
+	Specifications Specifications     `bson:"specifications"`
+	Content        string             `bson:"content"`
+	LaptopImage    []string           `bson:"laptop_image"`
+	CreatedAt      time.Time          `bson:"created_at"`
+	UpdatedAt      time.Time          `bson:"updated_at"`
 }
 
 type Specifications struct {
-	Processor  string `json:"processor" bson:"processor"`
-	RAM        string `json:"RAM" bson:"RAM"`
-	Storage    string `json:"storage" bson:"storage"`
-	GPU        string `json:"GPU" bson:"GPU"`
-	ScreenSize string `json:"screen_size" bson:"screen_size"`
-	OS         string `json:"OS" bson:"OS"`
+	CPU               string `bson:"cpu"`
+	CPUCores          int    `bson:"cpu_cores"`
+	OperatingSystem   string `bson:"operating_system"`
+	ScreenSize        string `bson:"screen_size"`
+	ScreenRefreshRate string `bson:"screen_refresh_rate"`
+	ScreenBrightness  string `bson:"screen_brightness"`
+	ScreenType        string `bson:"screen_type"`
+	Storage           string `bson:"storage"`
+	Battery           string `bson:"battery"`
+	RAM               string `bson:"ram"`
+	Dimensions        string `bson:"dimensions"`
+	Weight            string `bson:"weight"`
 }

@@ -23,7 +23,7 @@
 
 
 .topbar-content p {
-    padding-top: 15px;
+    padding-top: 16.5px;
 }
 
 .topbar-left {
@@ -52,4 +52,43 @@
 .topbar img {
     width: 15.45px;
     height: 15.45px;
+}
+.topbar-search {    
+    background: #FFFFFF;
+    padding: 15px 0px;
+    border-bottom: 1.4px solid #ACACAC; 
+}
+
+.topbar-search .container {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.topbar-search img:first-child {
+    width: 33px;
+    height: 40px;
+}
+
+.topbar-search .icons-right {
+    display: flex;
+    align-items: center;
+    gap: 15px; 
+}
+
+.topbar-search .icons-right img:nth-child(1) { 
+    width: 19px;
+    height: 19px;
+}
+
+.topbar-search .icons-right img:nth-child(2) { 
+    width: 25px;
+    height: 25px;
+}
+
+.topbar-search .icons-right img:nth-child(3) { 
+    width: 36px;
+    height: 36px;
+    border-radius: 50%; 
+    object-fit: cover;
 }

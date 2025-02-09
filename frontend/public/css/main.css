@@ -1,0 +1,55 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+.topbar {
+    background-color: #020202;
+}
+
+.topbar-content {
+    color: white;
+    display: flex;
+    align-items: center; 
+    justify-content: space-between;
+    font-size: 12px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    color: #ACACAC;
+}
+
+
+.topbar-content p {
+    padding-top: 15px;
+}
+
+.topbar-left {
+    flex: 1;
+    text-align: left;
+}
+
+.topbar-center {
+    flex: 1;
+    text-align: center;
+}
+
+.topbar-right p {
+    margin-right: 40px;
+    color: #FFFFFF;
+}
+
+.topbar-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px; 
+}
+
+.topbar img {
+    width: 15.45px;
+    height: 15.45px;
+}

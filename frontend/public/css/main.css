@@ -388,6 +388,7 @@ body h4 {
     max-width: 200px; 
     padding: 10px;
     text-align: center;
+    padding-bottom: 20px;
 }
 
 .blog img {
@@ -407,4 +408,112 @@ body h4 {
 
 .blog .date {
     opacity: 50%;
+}
+
+.comments {
+    width: 100%;
+    max-width: 900px;
+    margin: 10px auto;
+    background: #F5F7FF;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.comments-container {
+    max-width: 800px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.quote-mark {
+    font-size: 48px;
+    color: #000;
+}
+
+.review-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 400;
+    font-size: 18px;
+    line-height: 27px;
+    color: #000;
+    max-width: 700px;
+    margin: 15px 0;
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.review-footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.review-button {
+    padding: 10px 25px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0156FF;
+    border: 2px solid #0156FF;
+    background: transparent;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.review-button:hover {
+    background: #0156FF;
+    color: #fff;
+}
+
+.review-author {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    text-align: right;
+    margin-bottom: 60px;
+}
+
+.info {
+    width: 100%;
+    background: #FFFFFF;
+    padding: 50px 0;
+}
+
+.info .container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.boxes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 30%;
+}
+
+.boxes img {
+    width: 65px;
+    height: 65px;
+    margin-bottom: 10px;
+}
+
+.boxes p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: #000000;
+}
+
+.boxes p:last-child {
+    font-size: 14px;
+    opacity: 0.7;
 }

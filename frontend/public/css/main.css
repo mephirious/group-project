@@ -124,7 +124,7 @@
     padding-top: 40px;
 }
 
-.hotnews h4 {
+body h4 {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
     margin-bottom: 10px;
@@ -357,6 +357,7 @@
     display: flex;
     flex-wrap: wrap; 
     justify-content: space-between;
+    padding-bottom: 20px;
 }
 
 .vendor-list img {
@@ -365,4 +366,45 @@
     margin-right: 10px;
     height: auto; 
     object-fit: contain;
+}
+
+.news .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.news-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; 
+    justify-content: left;
+}
+
+.blog {
+    transform: translateX(20px);
+    width: calc(100% / 6 - 15px); 
+    min-width: 180px; 
+    max-width: 200px; 
+    padding: 10px;
+    text-align: center;
+}
+
+.blog img {
+    width: 100%;
+    height: 100px;
+    border-radius: 5px;
+}
+
+.blog p {
+    font-size: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    margin: 5px 0;
+    color: #000;
+    opacity: 100%;
+}
+
+.blog .date {
+    opacity: 50%;
 }

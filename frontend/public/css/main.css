@@ -195,3 +195,153 @@
     font-weight: 600;
     margin: 5px 0;
 }
+
+.apple {
+    padding-top: 20px;
+}
+
+.apple .container button {
+    background: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    color: #000;
+    text-decoration: underline;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.apple .row {
+    display: flex;
+    justify-content: space-between; 
+    flex-wrap: nowrap; 
+    gap: 15px;
+    overflow-x: auto; 
+}
+
+.apple .vendor {
+    background: white;
+    padding: 15px;
+    text-align: center;
+    width: 180px;
+    min-width: 180px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.apple .vendor img {
+    transform:translateX(20px);
+    margin-top: 40px;
+    width: 200px;
+    height: auto;
+    position: relative; 
+    z-index: 11; 
+    padding-right: 10px;
+}
+
+.apple .vendor p {
+    transform:translateX(20px);
+    font-size: 22px;
+    padding-top: 40px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: white;
+    font-weight: bold;
+    position: absolute;
+    z-index: 12;
+}
+
+.apple .vendor a {
+    transform:translateX(20px);
+    position: absolute;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    bottom: 1px;
+    font-size: 13px;
+    color:white;
+    text-decoration: none;
+    z-index: 13;
+}
+
+.asus {
+    padding-top: 20px;
+}
+
+.asus .container button {
+    background: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    color: #000;
+    text-decoration: underline;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.asus .row {
+    display: flex;
+    justify-content: space-between; 
+    flex-wrap: nowrap;
+    gap: 15px; 
+    overflow-x: auto; 
+}
+
+.asus .vendor {
+    background: white;
+    padding: 15px;
+    text-align: center;
+    width: 180px; 
+    min-width: 180px;
+    height: 250px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.asus .vendor img {
+    transform:translateX(20px);
+    margin-top: 40px;
+    width: 200px;
+    height: auto;
+    position: relative;
+    z-index: 11; 
+    padding-right: 10px;
+}
+
+.asus .vendor p {
+    transform:translateX(20px);
+    font-size: 22px;
+    padding-top: 40px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: white;
+    font-weight: bold;
+    position: absolute;
+    z-index: 12;
+}
+
+.asus .vendor a {
+    transform:translateX(20px);
+    position: absolute;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    bottom: 1px;
+    font-size: 13px;
+    color:white;
+    text-decoration: none;
+    z-index: 13;
+}

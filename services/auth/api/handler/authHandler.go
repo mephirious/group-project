@@ -28,6 +28,7 @@ func (s *ApiServer) Start(listenAddr string, prefix string) error {
 		Addr: listenAddr,
 	}
 
+	http.HandleFunc(prefix+"/health", s.healthHandler)
 	http.HandleFunc("POST "+prefix+"/register", s.registerHandler)
 	http.HandleFunc("POST "+prefix+"/login", s.loginHandler)
 	http.HandleFunc("GET "+prefix+"/logout", s.logoutHandler)
@@ -45,6 +46,10 @@ func (s *ApiServer) Stop(ctx context.Context) {
 	} else {
 		log.Println("Server stopped gracefully")
 	}
+}
+
+func (s *ApiServer) healthHandler(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, http.StatusOK, map[string]string{"status": "ok", "service": "auth-service"})
 }
 
 func (s *ApiServer) registerHandler(w http.ResponseWriter, r *http.Request) {
@@ -177,7 +182,7 @@ func (s *ApiServer) refreshHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	isSecure := os.Getenv("SERVICE_ENV") == "production"
-	
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     "access_token",
 		Value:    response.AccessToken,

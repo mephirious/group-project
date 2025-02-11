@@ -15,7 +15,6 @@ func main() {
 
 	cfg := config.NewConfig()
 
-	// Load environment variables
 	authServiceURL := os.Getenv("AUTH_SERVICE_URL")
 	if authServiceURL == "" {
 		log.Fatal("AUTH_SERVICE_URL not set in .env file")
@@ -25,12 +24,22 @@ func main() {
 		log.Fatal("PRODUCTS_SERVICE_URL not set in .env file")
 	}
 
-	// Start automatic health checking
 	go cfg.HealthCheckLoop()
 
-	// Set up routes
 	http.Handle("/auth/", middleware.Logging(proxy.ReverseProxyHandler(authServiceURL)))
 	http.Handle("/products/", middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)))
+
+	brandPermissions := map[string]string{
+		"GET":    "",
+		"POST":   "admin",
+		"PUT":    "admin",
+		"DELETE": "admin",
+	}
+	http.Handle("/products/brands", middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions))
+	http.Handle("/products/categories", middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions))
+	http.Handle("/products/inventory", middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions))
+	http.Handle("/products/products", middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions))
+	http.Handle("/products/types", middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions))
 
 	// Start Gateway Server
 	port := ":8080"

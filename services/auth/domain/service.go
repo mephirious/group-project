@@ -38,6 +38,10 @@ type (
 	RefreshInput struct {
 		RefreshToken string
 	}
+	ValidateResponse struct {
+		UserID string `json:"user_id"`
+		Role   string `json:"role"`
+	}
 )
 
 type List[T any] struct {
@@ -50,6 +54,7 @@ type Service interface {
 	Login(context.Context, LoginInput) (*LoginResponse, error)
 	Logout(context.Context, LogoutInput) (*LogoutResponse, error)
 	RefreshUserAccessToken(context.Context, RefreshInput) (*LoginResponse, error)
+	ValidateAccessToken(context.Context, LogoutInput) (*ValidateResponse, error)
 }
 
 func (i *LoginInput) Validate() error {

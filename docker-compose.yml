@@ -11,6 +11,7 @@ services:
       - ./services/gateway-service/.env.prod
     depends_on:
       - auth_service
+      - products_service
 
   auth_service:
     container_name: auth-service

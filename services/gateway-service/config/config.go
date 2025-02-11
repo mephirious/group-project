@@ -54,6 +54,7 @@ func NewConfig() *Config {
 	}
 
 	cfg.Services = append(cfg.Services, ServiceHealth{Name: "auth-service", URL: os.Getenv("AUTH_SERVICE_URL") + "/auth/api/v1/health"})
+	cfg.Services = append(cfg.Services, ServiceHealth{Name: "products-service", URL: os.Getenv("PRODUCTS_SERVICE_URL") + "/brands"})
 
 	return cfg
 }

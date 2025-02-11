@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+	"log/slog"
 	"os"
 	"strconv"
 
@@ -23,7 +25,7 @@ type Config struct {
 func LoadConfig() (*Config, error) {
 	err := godotenv.Load()
 	if err != nil {
-		return nil, err
+		slog.Error(fmt.Sprintf("Error occured while loading config: %s", err))
 	}
 
 	config := &Config{}

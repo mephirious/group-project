@@ -20,12 +20,17 @@ func main() {
 	if authServiceURL == "" {
 		log.Fatal("AUTH_SERVICE_URL not set in .env file")
 	}
+	productsServiceURL := os.Getenv("PRODUCTS_SERVICE_URL")
+	if authServiceURL == "" {
+		log.Fatal("PRODUCTS_SERVICE_URL not set in .env file")
+	}
 
 	// Start automatic health checking
 	go cfg.HealthCheckLoop()
 
 	// Set up routes
 	http.Handle("/auth/", middleware.Logging(proxy.ReverseProxyHandler(authServiceURL)))
+	http.Handle("/products/", middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)))
 
 	// Start Gateway Server
 	port := ":8080"

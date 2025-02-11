@@ -12,8 +12,6 @@ services:
     depends_on:
       - auth_service
 
-
-
   auth_service:
     container_name: auth-service
     build:
@@ -22,6 +20,15 @@ services:
       - db
     env_file:
       - ./services/auth/.env.prod
+
+  products_service:
+    container_name: products-service
+    build:
+      context: ./services/products-service
+    depends_on:
+      - db
+    env_file:
+      - ./services/products-service/.env.prod
 
   db:
     image: mongo:latest

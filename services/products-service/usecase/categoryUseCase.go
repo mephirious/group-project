@@ -55,6 +55,14 @@ func (c *categoryUseCase) GetCategoryByName(ctx context.Context, name string) (*
 }
 
 func (c *categoryUseCase) CreateCategory(ctx context.Context, category *domain.Category) error {
+	existingCategory, err := c.categoryRepository.GetCategoryByName(ctx, category.CategoryName)
+	if err != nil {
+		return err
+	}
+	if existingCategory != nil {
+		return errors.New("category already exists")
+	}
+
 	return c.categoryRepository.CreateCategory(ctx, category)
 }
 

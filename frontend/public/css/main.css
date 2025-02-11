@@ -1,0 +1,519 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: 700;
+    font-style: bold;
+}
+
+.topbar {
+    background-color: #020202;
+}
+
+.topbar-content {
+    color: white;
+    display: flex;
+    align-items: center; 
+    justify-content: space-between;
+    font-size: 12px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    color: #ACACAC;
+}
+
+
+.topbar-content p {
+    padding-top: 16.5px;
+}
+
+.topbar-left {
+    flex: 1;
+    text-align: left;
+}
+
+.topbar-center {
+    flex: 1;
+    text-align: center;
+}
+
+.topbar-right p {
+    margin-right: 40px;
+    color: #FFFFFF;
+}
+
+.topbar-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px; 
+}
+
+.topbar img {
+    width: 15.45px;
+    height: 15.45px;
+}
+.topbar-search {    
+    background: #FFFFFF;
+    padding: 15px 0px;
+    border-bottom: 1.4px solid #ACACAC; 
+}
+
+.topbar-search .container {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.topbar-search img:first-child {
+    width: 33px;
+    height: 40px;
+}
+
+.topbar-search .icons-right {
+    display: flex;
+    align-items: center;
+    gap: 15px; 
+}
+
+.topbar-search .icons-right img:nth-child(1) { 
+    width: 19px;
+    height: 19px;
+}
+
+.topbar-search .icons-right img:nth-child(2) { 
+    width: 25px;
+    height: 25px;
+}
+
+.topbar-search .icons-right img:nth-child(3) { 
+    width: 36px;
+    height: 36px;
+    border-radius: 50%; 
+    object-fit: cover;
+}
+
+.hero-section {
+    width: 100%;
+    height: 250px;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover; 
+}
+
+.hotnews {
+    padding-top: 40px;
+}
+
+body h4 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.hotnews .row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap; 
+    overflow-x: auto; 
+    gap: 15px; 
+}
+
+.hotnews .laptop {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+    width: 170px; 
+    min-width: 170px; 
+    margin: 0;
+    position: relative;
+}
+
+.hotnews .laptop .laptop-img {
+    width: 150px;
+    display: block;
+    margin: 0 auto;
+}
+
+.hotnews .laptop .stock {
+    width: 60px;
+    position: absolute;
+}
+
+.hotnews .reviews {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 134px;
+}
+
+.hotnews .reviews img {
+    width: 10px;
+}
+
+.hotnews .laptop .reviews p {
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    margin-left: 4px;
+    font-size: 10px;
+    color: #777;
+}
+
+.hotnews .laptop p {
+    padding-left: 14px;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-weight: 500;
+    margin: 5px 0;
+}
+
+.hotnews .laptop .price p {
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    margin: 5px 0;
+}
+
+.apple {
+    padding-top: 20px;
+}
+
+.apple .container button {
+    background: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    color: #000;
+    text-decoration: underline;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.apple .row {
+    display: flex;
+    justify-content: space-between; 
+    flex-wrap: nowrap; 
+    gap: 15px;
+    overflow-x: auto; 
+}
+
+.apple .vendor {
+    background: white;
+    padding: 15px;
+    text-align: center;
+    width: 180px;
+    min-width: 180px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.apple .vendor img {
+    transform:translateX(20px);
+    margin-top: 40px;
+    width: 200px;
+    height: auto;
+    position: relative; 
+    z-index: 11; 
+    padding-right: 10px;
+}
+
+.apple .vendor p {
+    transform:translateX(20px);
+    font-size: 22px;
+    padding-top: 40px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: white;
+    font-weight: bold;
+    position: absolute;
+    z-index: 12;
+}
+
+.apple .vendor a {
+    transform:translateX(20px);
+    position: absolute;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    bottom: 1px;
+    font-size: 13px;
+    color:white;
+    text-decoration: none;
+    z-index: 13;
+}
+
+.asus {
+    padding-top: 20px;
+}
+
+.asus .container button {
+    background: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    color: #000;
+    text-decoration: underline;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.asus .row {
+    display: flex;
+    justify-content: space-between; 
+    flex-wrap: nowrap;
+    gap: 15px; 
+    overflow-x: auto; 
+}
+
+.asus .vendor {
+    background: white;
+    padding: 15px;
+    text-align: center;
+    width: 180px; 
+    min-width: 180px;
+    height: 250px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.asus .vendor img {
+    transform:translateX(20px);
+    margin-top: 40px;
+    width: 200px;
+    height: auto;
+    position: relative;
+    z-index: 11; 
+    padding-right: 10px;
+}
+
+.asus .vendor p {
+    transform:translateX(20px);
+    font-size: 22px;
+    padding-top: 40px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: white;
+    font-weight: bold;
+    position: absolute;
+    z-index: 12;
+}
+
+.asus .vendor a {
+    transform:translateX(20px);
+    position: absolute;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    bottom: 1px;
+    font-size: 13px;
+    color:white;
+    text-decoration: none;
+    z-index: 13;
+}
+
+.vendor-list {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding-top: 20px;
+}
+
+.vendor-list .container {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: space-between;
+    padding-bottom: 20px;
+}
+
+.vendor-list img {
+    width: 130px;  
+    padding: 10px;
+    margin-right: 10px;
+    height: auto; 
+    object-fit: contain;
+}
+
+.news .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.news-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; 
+    justify-content: left;
+}
+
+.blog {
+    transform: translateX(20px);
+    width: calc(100% / 6 - 15px); 
+    min-width: 180px; 
+    max-width: 200px; 
+    padding: 10px;
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+.blog img {
+    width: 100%;
+    height: 100px;
+    border-radius: 5px;
+}
+
+.blog p {
+    font-size: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    margin: 5px 0;
+    color: #000;
+    opacity: 100%;
+}
+
+.blog .date {
+    opacity: 50%;
+}
+
+.comments {
+    width: 100%;
+    max-width: 900px;
+    margin: 10px auto;
+    background: #F5F7FF;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.comments-container {
+    max-width: 800px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.quote-mark {
+    font-size: 48px;
+    color: #000;
+}
+
+.review-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 400;
+    font-size: 18px;
+    line-height: 27px;
+    color: #000;
+    max-width: 700px;
+    margin: 15px 0;
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.review-footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.review-button {
+    padding: 10px 25px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0156FF;
+    border: 2px solid #0156FF;
+    background: transparent;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.review-button:hover {
+    background: #0156FF;
+    color: #fff;
+}
+
+.review-author {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    text-align: right;
+    margin-bottom: 60px;
+}
+
+.info {
+    width: 100%;
+    background: #FFFFFF;
+    padding: 50px 0;
+}
+
+.info .container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.boxes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 30%;
+}
+
+.boxes img {
+    width: 65px;
+    height: 65px;
+    margin-bottom: 10px;
+}
+
+.boxes p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: #000000;
+}
+
+.boxes p:last-child {
+    font-size: 14px;
+    opacity: 0.7;
+}

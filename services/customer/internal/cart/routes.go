@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// RegisterRoutes регистрирует все маршруты для Cart Service
+// RegisterRoutes register routes
 func RegisterRoutes(router *gin.Engine, handler *CartHandler) {
 	routes := router.Group("/cart")
 	{

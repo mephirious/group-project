@@ -10,19 +10,19 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// CartRepository - репозиторий для работы с корзиной
+// CartRepository - repository for working with cart
 type CartRepository struct {
 	Collection string
 }
 
-// NewCartRepository создает новый репозиторий корзины
+// NewCartRepository creates
 func NewCartRepository() *CartRepository {
 	return &CartRepository{
 		Collection: "carts",
 	}
 }
 
-// GetCart возвращает корзину по userID
+// GetCart returns cart by userID
 func (r *CartRepository) GetCart(ctx context.Context, userID string) (*Cart, error) {
 	logger.Log.Infof("Fetching cart for user_id: %s", userID)
 	collection := database.GetCollection("cart_service", r.Collection)
@@ -35,7 +35,7 @@ func (r *CartRepository) GetCart(ctx context.Context, userID string) (*Cart, err
 	return &cart, nil
 }
 
-// AddToCart добавляет товар в корзину
+// AddToCart adds product to the cart
 func (r *CartRepository) AddToCart(ctx context.Context, userID, productID string, amount int) error {
 	logger.Log.Infof("Adding product %s (amount: %d) to cart of user %s", productID, amount, userID)
 	collection := database.GetCollection("cart_service", r.Collection)
@@ -56,7 +56,7 @@ func (r *CartRepository) AddToCart(ctx context.Context, userID, productID string
 		return err
 	}
 
-	// Проверяем, есть ли уже этот продукт в корзине
+	// Checking if we already have this item in the cart
 	for i, item := range cart.Products {
 		if item.ProductID == productID {
 			cart.Products[i].Amount += amount
@@ -68,7 +68,7 @@ func (r *CartRepository) AddToCart(ctx context.Context, userID, productID string
 		}
 	}
 
-	// Добавляем новый товар
+	// add new product
 	newItem := CartItem{
 		ID:        primitive.NewObjectID(),
 		ProductID: productID,
@@ -83,7 +83,7 @@ func (r *CartRepository) AddToCart(ctx context.Context, userID, productID string
 	return err
 }
 
-// RemoveFromCart удаляет товар по его ID в корзине
+// RemoveFromCart deletes the product by ID
 func (r *CartRepository) RemoveFromCart(ctx context.Context, userID, cartItemID string) error {
 	logger.Log.Infof("Removing item %s from cart of user %s", cartItemID, userID)
 	collection := database.GetCollection("cart_service", r.Collection)
@@ -109,7 +109,7 @@ func (r *CartRepository) RemoveFromCart(ctx context.Context, userID, cartItemID 
 	return err
 }
 
-// ClearCart очищает корзину
+// ClearCart clears Cart
 func (r *CartRepository) ClearCart(ctx context.Context, userID string) error {
 	logger.Log.Infof("Clearing cart of user %s", userID)
 	collection := database.GetCollection("cart_service", r.Collection)
@@ -120,7 +120,7 @@ func (r *CartRepository) ClearCart(ctx context.Context, userID string) error {
 	return err
 }
 
-// UpdateCartItem обновляет количество товара или удаляет его, если amount < 1
+// UpdateCartItem updates quantity of the product or deletes if amount < 1
 func (r *CartRepository) UpdateCartItem(ctx context.Context, userID, cartItemID string, newAmount int) (string, error) {
 	logger.Log.Infof("Updating item %s in cart of user %s to amount %d", cartItemID, userID, newAmount)
 	collection := database.GetCollection("cart_service", r.Collection)
@@ -136,7 +136,7 @@ func (r *CartRepository) UpdateCartItem(ctx context.Context, userID, cartItemID 
 		return "", errors.New("invalid item ID format")
 	}
 
-	// Если количество меньше 1, удаляем товар и возвращаем специальное сообщение
+	// if amount < 1, we delete the product
 	if newAmount < 1 {
 		logger.Log.Infof("Amount is %d, removing item %s from cart of user %s", newAmount, cartItemID, userID)
 		err := r.RemoveFromCart(ctx, userID, cartItemID)
@@ -146,7 +146,7 @@ func (r *CartRepository) UpdateCartItem(ctx context.Context, userID, cartItemID 
 		return "Item removed from cart because amount was less than 1", nil
 	}
 
-	// Обновляем количество товара
+	// Update the product
 	for i, item := range cart.Products {
 		if item.ID == itemID {
 			cart.Products[i].Amount = newAmount

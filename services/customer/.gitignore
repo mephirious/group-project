@@ -1,0 +1,7 @@
+# Go build output (compiled files)
+/build/
+*.test
+
+# .env file (for sensitive environment variables)
+.env
+.env.*

@@ -6,17 +6,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CartHandler - обработчик для корзины
+// CartHandler - cart handler
 type CartHandler struct {
 	Repo *CartRepository
 }
 
-// NewCartHandler создает новый обработчик корзины
+// NewCartHandler creating the handler
 func NewCartHandler(repo *CartRepository) *CartHandler {
 	return &CartHandler{Repo: repo}
 }
 
-// GetCartHandler возвращает корзину пользователя
+// GetCartHandler return cart to the user
 func (h *CartHandler) GetCartHandler(c *gin.Context) {
 	userID := c.Param("user_id")
 	cart, err := h.Repo.GetCart(c.Request.Context(), userID)
@@ -27,7 +27,7 @@ func (h *CartHandler) GetCartHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, cart)
 }
 
-// AddToCartHandler добавляет товар в корзину
+// AddToCartHandler adds the product to the cart
 func (h *CartHandler) AddToCartHandler(c *gin.Context) {
 	var req struct {
 		UserID    string `json:"user_id"`
@@ -48,7 +48,7 @@ func (h *CartHandler) AddToCartHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Item added"})
 }
 
-// RemoveFromCartHandler удаляет товар по его ID
+// RemoveFromCartHandler deletes product by its ID
 func (h *CartHandler) RemoveFromCartHandler(c *gin.Context) {
 	userID := c.Param("user_id")
 	itemID := c.Param("item_id")
@@ -62,7 +62,7 @@ func (h *CartHandler) RemoveFromCartHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Item removed"})
 }
 
-// ClearCartHandler очищает корзину
+// ClearCartHandler clears cart
 func (h *CartHandler) ClearCartHandler(c *gin.Context) {
 	userID := c.Param("user_id")
 
@@ -75,7 +75,7 @@ func (h *CartHandler) ClearCartHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Cart cleared"})
 }
 
-// UpdateCartItemHandler обновляет количество товара или удаляет его, если amount < 1
+// UpdateCartItemHandler updates quantity of product or deletes, if amount < 1
 func (h *CartHandler) UpdateCartItemHandler(c *gin.Context) {
 	userID := c.Param("user_id")
 	itemID := c.Param("item_id")

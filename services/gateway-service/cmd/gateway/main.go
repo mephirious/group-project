@@ -26,8 +26,8 @@ func main() {
 
 	go cfg.HealthCheckLoop()
 
-	http.Handle("/auth/", middleware.Logging(proxy.ReverseProxyHandler(authServiceURL)))
-	http.Handle("/products/", middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)))
+	http.Handle("/auth/", middleware.CORS(middleware.Logging(proxy.ReverseProxyHandler(authServiceURL))))
+	http.Handle("/products/", middleware.CORS(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL))))
 
 	brandPermissions := map[string]string{
 		"GET":    "",
@@ -35,11 +35,12 @@ func main() {
 		"PUT":    "admin",
 		"DELETE": "admin",
 	}
-	http.Handle("/products/brands", middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions))
-	http.Handle("/products/categories", middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions))
-	http.Handle("/products/inventory", middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions))
-	http.Handle("/products/products", middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions))
-	http.Handle("/products/types", middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions))
+
+	http.Handle("/products/brands", middleware.CORS(middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions)))
+	http.Handle("/products/categories", middleware.CORS(middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions)))
+	http.Handle("/products/inventory", middleware.CORS(middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions)))
+	http.Handle("/products/products", middleware.CORS(middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions)))
+	http.Handle("/products/types", middleware.CORS(middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions)))
 
 	// Start Gateway Server
 	port := ":8080"

@@ -1,0 +1,140 @@
+.filter-link {
+    text-decoration: underline;
+    color: black;
+    margin-left: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.filter-link.active {
+    opacity: 0.5;
+}
+
+.filter-link:hover {
+    opacity: 1;
+}
+
+.filter-link-asus {
+    text-decoration: underline;
+    color: black;
+    margin-left: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.filter-link-asus.active {
+    opacity: 0.5;
+}
+
+.filter-link-asus:hover {
+    opacity: 1;
+}
+
+.vendor-list {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding-top: 20px;
+}
+
+.vendor-list .container {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: space-between;
+    padding-bottom: 20px;
+}
+
+.vendor-list img {
+    width: 130px;  
+    padding: 10px;
+    margin-right: 10px;
+    height: auto; 
+    object-fit: contain;
+}
+
+.news .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.news-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; 
+    justify-content: left;
+}
+
+.blog {
+    transform: translateX(20px);
+    width: calc(100% / 6 - 15px); 
+    min-width: 180px; 
+    max-width: 200px; 
+    padding: 10px;
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+.blog img {
+    width: 100%;
+    height: 100px;
+    border-radius: 5px;
+}
+
+.blog p {
+    font-size: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    margin: 5px 0;
+    color: #000;
+    opacity: 100%;
+}
+
+.blog .date {
+    opacity: 50%;
+}
+
+.info {
+    width: 100%;
+    background: #F5F7FF;
+    padding: 50px 0;
+}
+
+.info .container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.boxes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 30%;
+}
+
+.boxes img {
+    width: 65px;
+    height: 65px;
+    margin-bottom: 10px;
+}
+
+.boxes p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: #000000;
+}
+
+.boxes p:last-child {
+    font-size: 14px;
+    opacity: 0.7;
+}
+

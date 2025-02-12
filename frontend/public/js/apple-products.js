@@ -31,7 +31,7 @@ async function fetchProducts() {
                             <strong>RAM:</strong> ${ram}<br>
                             <strong>Storage:</strong> ${storage}
                         </p>
-                        <a href="#" class="btn btn-dark btn-sm w-100 mt-auto" style="position: relative;">Добавить в корзину</a>
+                        <a href="#" class="btn btn-dark btn-sm w-100 mt-auto" style="position: relative;">Добавить в кор</a>
                     </div>
                 </div>
             `;

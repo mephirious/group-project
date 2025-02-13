@@ -7,8 +7,8 @@ import (
 )
 
 type Brand struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty"`
-	BrandName string             `bson:"brand_name"`
-	CreatedAt time.Time          `bson:"created_at"`
-	UpdatedAt time.Time          `bson:"updated_at"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	BrandName string             `bson:"brand_name" json:"brand_name"`
+	CreatedAt time.Time          `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time          `bson:"updated_at" json:"updated_at"`
 }

@@ -87,3 +87,20 @@ func (s *LoggingService) RefreshUserAccessToken(ctx context.Context, input domai
 	}()
 	return s.next.RefreshUserAccessToken(ctx, input)
 }
+
+func (s *LoggingService) ValidateAccessToken(ctx context.Context, input domain.LogoutInput) (response *domain.ValidateResponse, err error) {
+	start := time.Now()
+	defer func() {
+		logger := s.logger
+		if response != nil {
+			logger = s.logger.With(slog.Any("claims", response))
+		} else {
+			logger = s.logger.With(slog.Any("err", err))
+		}
+		logger.Info(
+			"ValidateAccessToken",
+			"took", time.Since(start).String(),
+		)
+	}()
+	return s.next.ValidateAccessToken(ctx, input)
+}

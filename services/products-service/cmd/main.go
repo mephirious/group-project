@@ -45,7 +45,7 @@ func main() {
 	inventoryRepository := repository.NewInventoryRepository(database)
 	inventoryUseCase := usecase.NewInventoryUseCase(inventoryRepository)
 	productRepository := repository.NewProductRepository(database)
-	productUseCase := usecase.NewProductUseCase(productRepository)
+	productUseCase := usecase.NewProductUseCase(productRepository, categoryRepository, brandRepository, typeRepository)
 
 	router := gin.Default()
 	handler.NewBrandHandler(router, brandUseCase)

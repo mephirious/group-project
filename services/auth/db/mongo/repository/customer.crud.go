@@ -15,6 +15,7 @@ type (
 		Email     string
 		Password  string
 		Username  *string
+		Role      string
 		FirstName *string
 		LastName  *string
 		Phone     *string
@@ -76,6 +77,7 @@ func (db *DB) CreateCustomer(ctx context.Context, input CreateCustomerInput) (*d
 		ID:        primitive.NewObjectID().Hex(),
 		Email:     input.Email,
 		Password:  input.Password,
+		Role:      input.Role,
 		Verified:  false,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -93,6 +95,9 @@ func (db *DB) CreateCustomer(ctx context.Context, input CreateCustomerInput) (*d
 	}
 	if input.LastName != nil && *input.LastName != "" {
 		newCustomer.LastName = *input.LastName
+	}
+	if input.Role == "" {
+		newCustomer.Role = "user"
 	}
 
 	// Insert the new customer into the "customers" collection

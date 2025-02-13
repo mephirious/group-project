@@ -7,6 +7,7 @@ type CustomerView struct {
 	Email    string `bson:"email"`
 	Password string `bson:"password"`
 	Verified bool   `bson:"verified"`
+	Role     string `bson:"role"`
 	// FirstName string    `bson:"first_name,omitempty"`
 	// LastName  string    `bson:"last_name,omitempty"`
 	// Phone     string    `bson:"phone,omitempty"`
@@ -19,6 +20,7 @@ type CustomerSchema struct {
 	Email     string    `bson:"email"`
 	Username  string    `bson:"username"`
 	Password  string    `bson:"password"`
+	Role      string    `bson:"role"`
 	FirstName string    `bson:"first_name,omitempty"`
 	LastName  string    `bson:"last_name,omitempty"`
 	Phone     string    `bson:"phone,omitempty"`

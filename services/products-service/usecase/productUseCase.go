@@ -10,36 +10,71 @@ import (
 )
 
 type ProductUseCase interface {
-	GetAllProducts(ctx context.Context, limit, skip int, sortField, sortOrder, search string) ([]domain.Product, error)
-	GetProductByID(ctx context.Context, id primitive.ObjectID) (*domain.Product, error)
-	GetProductByName(ctx context.Context, name string) (*domain.Product, error)
+	GetAllProducts(ctx context.Context, limit, skip int, sortField, sortOrder, search string) ([]domain.ProductView, error)
+	GetProductByID(ctx context.Context, id primitive.ObjectID) (*domain.ProductView, error)
+	GetProductByName(ctx context.Context, name string) (*domain.ProductView, error)
 	CreateProduct(ctx context.Context, product *domain.Product) error
 	UpdateProduct(ctx context.Context, product *domain.Product) error
 	DeleteProduct(ctx context.Context, id primitive.ObjectID) error
 }
 
 type productUseCase struct {
-	productRepository repository.ProductRepository
+	productRepository  repository.ProductRepository
+	categoryRepository repository.CategoryRepository
+	brandRepository    repository.BrandRepository
+	typeRepository     repository.TypeRepository
 }
 
-func NewProductUseCase(repository repository.ProductRepository) *productUseCase {
+func NewProductUseCase(productRepository repository.ProductRepository, categoryRepository repository.CategoryRepository, brandRepository repository.BrandRepository, typeRepository repository.TypeRepository) *productUseCase {
 	return &productUseCase{
-		productRepository: repository,
+		productRepository:  productRepository,
+		categoryRepository: categoryRepository,
+		brandRepository:    brandRepository,
+		typeRepository:     typeRepository,
 	}
 }
 
-func (p *productUseCase) GetAllProducts(ctx context.Context, limit, skip int, sortField, sortOrder, search string) ([]domain.Product, error) {
+func (p *productUseCase) GetAllProducts(ctx context.Context, limit, skip int, sortField, sortOrder, search string) ([]domain.ProductView, error) {
 	products, err := p.productRepository.GetAllProducts(ctx, limit, skip, sortField, sortOrder, search)
 	if err != nil {
 		return nil, err
 	}
-	if len(products) == 0 {
-		return nil, errors.New("no products found")
+
+	// convert product to product view
+	productViews := make([]domain.ProductView, len(products))
+
+	// set category, brand, type names
+	for i, product := range products {
+		Category, err := p.categoryRepository.GetCategoryByID(ctx, product.CategoryID)
+		if err != nil {
+			Category = &domain.Category{CategoryName: "Unknown"}
+		}
+		Brand, err := p.brandRepository.GetBrandByID(ctx, product.BrandID)
+		if err != nil {
+			Brand = &domain.Brand{BrandName: "Unknown"}
+		}
+		Type, err := p.typeRepository.GetTypeByID(ctx, product.TypeID)
+		if err != nil {
+			Type = &domain.Type{TypeName: "Unknown"}
+		}
+		productViews[i] = domain.ProductView{
+			ID:             product.ID,
+			ModelName:      product.ModelName,
+			Price:          product.Price,
+			Category:       Category.CategoryName,
+			Brand:          Brand.BrandName,
+			Type:           Type.TypeName,
+			Specifications: product.Specifications,
+			Content:        product.Content,
+			LaptopImage:    product.LaptopImage,
+			CreatedAt:      product.CreatedAt,
+			UpdatedAt:      product.UpdatedAt,
+		}
 	}
-	return products, nil
+	return productViews, nil
 }
 
-func (p *productUseCase) GetProductByID(ctx context.Context, id primitive.ObjectID) (*domain.Product, error) {
+func (p *productUseCase) GetProductByID(ctx context.Context, id primitive.ObjectID) (*domain.ProductView, error) {
 	product, err := p.productRepository.GetProductByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -47,10 +82,37 @@ func (p *productUseCase) GetProductByID(ctx context.Context, id primitive.Object
 	if product == nil {
 		return nil, errors.New("product not found")
 	}
-	return product, nil
+
+	// Get category, brand, type names
+	Category, err := p.categoryRepository.GetCategoryByID(ctx, product.CategoryID)
+	if err != nil {
+		Category = &domain.Category{CategoryName: "Unknown"}
+	}
+	Brand, err := p.brandRepository.GetBrandByID(ctx, product.BrandID)
+	if err != nil {
+		Brand = &domain.Brand{BrandName: "Unknown"}
+	}
+	Type, err := p.typeRepository.GetTypeByID(ctx, product.TypeID)
+	if err != nil {
+		Type = &domain.Type{TypeName: "Unknown"}
+	}
+
+	return &domain.ProductView{
+		ID:             product.ID,
+		ModelName:      product.ModelName,
+		Price:          product.Price,
+		Category:       Category.CategoryName,
+		Brand:          Brand.BrandName,
+		Type:           Type.TypeName,
+		Specifications: product.Specifications,
+		Content:        product.Content,
+		LaptopImage:    product.LaptopImage,
+		CreatedAt:      product.CreatedAt,
+		UpdatedAt:      product.UpdatedAt,
+	}, nil
 }
 
-func (p *productUseCase) GetProductByName(ctx context.Context, name string) (*domain.Product, error) {
+func (p *productUseCase) GetProductByName(ctx context.Context, name string) (*domain.ProductView, error) {
 	product, err := p.productRepository.GetProductByName(ctx, name)
 	if err != nil {
 		return nil, err
@@ -58,7 +120,34 @@ func (p *productUseCase) GetProductByName(ctx context.Context, name string) (*do
 	if product == nil {
 		return nil, errors.New("product not found")
 	}
-	return product, nil
+
+	// Get category, brand, type names
+	Category, err := p.categoryRepository.GetCategoryByID(ctx, product.CategoryID)
+	if err != nil {
+		Category = &domain.Category{CategoryName: "Unknown"}
+	}
+	Brand, err := p.brandRepository.GetBrandByID(ctx, product.BrandID)
+	if err != nil {
+		Brand = &domain.Brand{BrandName: "Unknown"}
+	}
+	Type, err := p.typeRepository.GetTypeByID(ctx, product.TypeID)
+	if err != nil {
+		Type = &domain.Type{TypeName: "Unknown"}
+	}
+
+	return &domain.ProductView{
+		ID:             product.ID,
+		ModelName:      product.ModelName,
+		Price:          product.Price,
+		Category:       Category.CategoryName,
+		Brand:          Brand.BrandName,
+		Type:           Type.TypeName,
+		Specifications: product.Specifications,
+		Content:        product.Content,
+		LaptopImage:    product.LaptopImage,
+		CreatedAt:      product.CreatedAt,
+		UpdatedAt:      product.UpdatedAt,
+	}, nil
 }
 
 func (p *productUseCase) CreateProduct(ctx context.Context, product *domain.Product) error {

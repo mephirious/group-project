@@ -1,0 +1,48 @@
+.user-page {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.user-page h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.user-page form div {
+    margin-bottom: 15px;
+}
+
+.user-page label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.user-page input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.user-page button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.user-page button:hover {
+    background-color: #0056b3;
+}
+
+.user-page .error {
+    color: red;
+    text-align: center;
+    margin-bottom: 15px;
+}

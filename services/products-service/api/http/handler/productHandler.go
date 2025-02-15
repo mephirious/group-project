@@ -17,6 +17,10 @@ type ProductRequest struct {
 	Specifications domain.Specifications `json:"specifications" binding:"required"`
 	Content        string                `json:"content" binding:"required"`
 	LaptopImage    []string              `json:"laptop_image" binding:"required"`
+	BrandID        string                `json:"brand_id" binding:"required"`
+	CategoryID     string                `json:"category_id" binding:"required"`
+	TypeID         string                `json:"type_id" binding:"required"`
+	Price          float64               `json:"price" binding:"required"`
 }
 
 type ProductHandler struct {
@@ -101,27 +105,62 @@ func (h *ProductHandler) GetProductByModelName(g *gin.Context) {
 func (h *ProductHandler) CreateProduct(g *gin.Context) {
 	var req ProductRequest
 	if err := g.ShouldBindJSON(&req); err != nil {
-		g.JSON(http.StatusBadRequest, gin.H{"error": "ModelName, Specifications, Content, and LaptopImage are required"})
+		g.JSON(http.StatusBadRequest, gin.H{"error": "ModelName, Specifications, Content, Price, and LaptopImage are required"})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
+		return
+	}
+
+	brandID, err := primitive.ObjectIDFromHex(req.BrandID)
+	if err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"error": "invalid brandID"})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
+		return
+	}
+	categoryID, err := primitive.ObjectIDFromHex(req.CategoryID)
+	if err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"error": "invalid categoryID"})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
+		return
+	}
+	typeID, err := primitive.ObjectIDFromHex(req.TypeID)
+	if err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"error": "invalid typeID"})
 		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
 		return
 	}
 
 	product := domain.Product{
-		ID:             primitive.NewObjectID(),
 		ModelName:      req.ModelName,
 		Specifications: req.Specifications,
 		Content:        req.Content,
 		LaptopImage:    req.LaptopImage,
+		BrandID:        brandID,
+		CategoryID:     categoryID,
+		TypeID:         typeID,
+		Price:          req.Price,
 	}
 
-	err := h.useCase.CreateProduct(g.Request.Context(), &product)
+	err = h.useCase.CreateProduct(g.Request.Context(), &product)
 	if err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
 		return
 	}
 
-	g.JSON(http.StatusCreated, product)
+	response, err := h.useCase.GetProductByName(g.Request.Context(), req.ModelName)
+	if err != nil {
+		g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
+		return
+	}
+
+	if response == nil {
+		g.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+		slog.Error(fmt.Sprintf("Method %s failed: Product not found", g.Request.Method))
+		return
+	}
+
+	g.JSON(http.StatusCreated, response)
 	slog.Info(fmt.Sprintf("Method %s finished successfully", g.Request.Method))
 }
 
@@ -141,12 +180,35 @@ func (h *ProductHandler) UpdateProduct(g *gin.Context) {
 		return
 	}
 
+	brandID, err := primitive.ObjectIDFromHex(req.BrandID)
+	if err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"error": "invalid brandID"})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
+		return
+	}
+	categoryID, err := primitive.ObjectIDFromHex(req.CategoryID)
+	if err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"error": "invalid categoryID"})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
+		return
+	}
+	typeID, err := primitive.ObjectIDFromHex(req.TypeID)
+	if err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"error": "invalid typeID"})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
+		return
+	}
+
 	product := domain.Product{
 		ID:             objID,
 		ModelName:      req.ModelName,
 		Specifications: req.Specifications,
 		Content:        req.Content,
 		LaptopImage:    req.LaptopImage,
+		BrandID:        brandID,
+		CategoryID:     categoryID,
+		TypeID:         typeID,
+		Price:          req.Price,
 	}
 
 	err = h.useCase.UpdateProduct(g.Request.Context(), &product)
@@ -156,7 +218,20 @@ func (h *ProductHandler) UpdateProduct(g *gin.Context) {
 		return
 	}
 
-	g.JSON(http.StatusOK, product)
+	response, err := h.useCase.GetProductByName(g.Request.Context(), req.ModelName)
+	if err != nil {
+		g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
+		return
+	}
+
+	if response == nil {
+		g.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+		slog.Error(fmt.Sprintf("Method %s failed: Product not found", g.Request.Method))
+		return
+	}
+
+	g.JSON(http.StatusOK, response)
 	slog.Info(fmt.Sprintf("Method %s finished successfully", g.Request.Method))
 }
 

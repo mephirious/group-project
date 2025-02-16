@@ -13,6 +13,7 @@ services:
       - auth_service
       - products_service
       - blogs_service
+      - reviews_service
 
   auth_service:
     container_name: auth-service
@@ -40,6 +41,15 @@ services:
       - db
     env_file:
       - ./services/blogs-service/.env.prod    
+
+  reviews_service:
+    container_name: reviews-service
+    build:
+      context: ./services/reviews-service
+    depends_on:
+      - db
+    env_file:
+      - ./services/reviews-service/.env.prod    
 
   db:
     image: mongo:latest

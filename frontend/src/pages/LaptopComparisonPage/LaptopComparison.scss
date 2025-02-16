@@ -1,5 +1,24 @@
 @import "../../App.scss";
 
+.empty-comparison{
+  min-height: 60vh;
+  img{
+      width: 120px;
+      margin-bottom: 1rem;
+  }
+  .shopping-btn{
+      padding: 0.65rem 2.8rem;
+      margin-top: 1.6rem;
+      border: 1px solid $clr-orange;
+      transition: $transition-ease;
+
+      &:hover{
+          background-color: transparent;
+          color: $clr-orange;
+      }
+  }
+}
+
 .laptop-comparison {
   padding: 20px 0;
 

@@ -15,18 +15,14 @@ const LaptopComparison = () => {
 
   if (laptops.length === 0) {
     return (
-      <div className="container my-5">
-        <div className="empty-comparison flex justify-center align-center flex-column font-manrope">
-          <img src={shopping_cart} alt="" />
-          <span className="fw-6 fs-15 text-gray">
-            Your laptop comparison list is empty.
-          </span>
-          <Link to="/" className="compare-btn bg-orange text-white fw-5">
-            Browse Laptops
-          </Link>
+      <div className='container my-5'>
+        <div className='empty-cart flex justify-center align-center flex-column font-manrope'>
+          <img src = {shopping_cart} alt = "" />
+          <span className='fw-6 fs-15 text-gray'>Your laptop comparison list is empty.</span>
+          <Link to = "/" className='shopping-btn bg-orange text-white fw-5'>Browse Laptops</Link>
         </div>
       </div>
-    );
+    )
   }
 
   const allSpecKeysSet = new Set();

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mephirious/group-project/services/products-service/domain"
@@ -99,10 +100,11 @@ func (c *CategoryHandler) CreateCategory(g *gin.Context) {
 	category := domain.Category{
 		ID:           primitive.NewObjectID(),
 		CategoryName: req.CategoryName,
+		CreatedAt:    time.Now(), // Ensure creation timestamp is set
+		UpdatedAt:    time.Now(),
 	}
 
-	err := c.useCase.CreateCategory(g.Request.Context(), &category)
-	if err != nil {
+	if err := c.useCase.CreateCategory(g.Request.Context(), &category); err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
 		return
@@ -121,6 +123,14 @@ func (c *CategoryHandler) UpdateCategory(g *gin.Context) {
 		return
 	}
 
+	// Fetch the existing category to preserve created_at
+	existingCategory, err := c.useCase.GetCategoryByID(g.Request.Context(), objID)
+	if err != nil {
+		g.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
+		slog.Error(fmt.Sprintf("Method %s failed: Category not found", g.Request.Method))
+		return
+	}
+
 	var req CategoryRequest
 	if err := g.ShouldBindJSON(&req); err != nil {
 		g.JSON(http.StatusBadRequest, gin.H{"error": "category_name is required"})
@@ -128,13 +138,15 @@ func (c *CategoryHandler) UpdateCategory(g *gin.Context) {
 		return
 	}
 
+	// Preserve created_at and update other fields
 	category := domain.Category{
 		ID:           objID,
 		CategoryName: req.CategoryName,
+		CreatedAt:    existingCategory.CreatedAt, // Preserve original created_at
+		UpdatedAt:    time.Now(),                 // Update timestamp
 	}
 
-	err = c.useCase.UpdateCategory(g.Request.Context(), &category)
-	if err != nil {
+	if err := c.useCase.UpdateCategory(g.Request.Context(), &category); err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
 		return

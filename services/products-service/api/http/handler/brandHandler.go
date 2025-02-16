@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mephirious/group-project/services/products-service/domain"
@@ -87,7 +88,6 @@ func (b *BrandHandler) GetBrandByName(c *gin.Context) {
 	c.JSON(http.StatusOK, brand)
 	slog.Info(fmt.Sprintf("Method %s finished successfully", c.Request.Method))
 }
-
 func (b *BrandHandler) CreateBrand(c *gin.Context) {
 	var req BrandRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -99,10 +99,11 @@ func (b *BrandHandler) CreateBrand(c *gin.Context) {
 	brand := domain.Brand{
 		ID:        primitive.NewObjectID(),
 		BrandName: req.BrandName,
+		CreatedAt: time.Now(), // Ensure creation timestamp is set
+		UpdatedAt: time.Now(),
 	}
 
-	err := b.useCase.CreateBrand(c.Request.Context(), &brand)
-	if err != nil {
+	if err := b.useCase.CreateBrand(c.Request.Context(), &brand); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		slog.Error(fmt.Sprintf("Method %s failed: %s", c.Request.Method, err))
 		return
@@ -121,6 +122,14 @@ func (b *BrandHandler) UpdateBrand(c *gin.Context) {
 		return
 	}
 
+	// Fetch the existing brand to preserve created_at
+	existingBrand, err := b.useCase.GetBrandByID(c.Request.Context(), objID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Brand not found"})
+		slog.Error(fmt.Sprintf("Method %s failed: Brand not found", c.Request.Method))
+		return
+	}
+
 	var req BrandRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "brand_name is required"})
@@ -128,13 +137,15 @@ func (b *BrandHandler) UpdateBrand(c *gin.Context) {
 		return
 	}
 
+	// Preserve created_at and update other fields
 	brand := domain.Brand{
 		ID:        objID,
 		BrandName: req.BrandName,
+		CreatedAt: existingBrand.CreatedAt, // Preserve original created_at
+		UpdatedAt: time.Now(),              // Update timestamp
 	}
 
-	err = b.useCase.UpdateBrand(c.Request.Context(), &brand)
-	if err != nil {
+	if err := b.useCase.UpdateBrand(c.Request.Context(), &brand); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		slog.Error(fmt.Sprintf("Method %s failed: %s", c.Request.Method, err))
 		return

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mephirious/group-project/services/products-service/domain"
@@ -97,12 +98,13 @@ func (t *TypeHandler) CreateType(g *gin.Context) {
 	}
 
 	typeEntity := domain.Type{
-		ID:       primitive.NewObjectID(),
-		TypeName: req.TypeName,
+		ID:        primitive.NewObjectID(),
+		TypeName:  req.TypeName,
+		CreatedAt: time.Now(), // Ensure creation timestamp is set
+		UpdatedAt: time.Now(),
 	}
 
-	err := t.useCase.CreateType(g.Request.Context(), &typeEntity)
-	if err != nil {
+	if err := t.useCase.CreateType(g.Request.Context(), &typeEntity); err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
 		return
@@ -121,6 +123,14 @@ func (t *TypeHandler) UpdateType(g *gin.Context) {
 		return
 	}
 
+	// Fetch the existing type to preserve created_at
+	existingType, err := t.useCase.GetTypeByID(g.Request.Context(), objID)
+	if err != nil {
+		g.JSON(http.StatusNotFound, gin.H{"error": "Type not found"})
+		slog.Error(fmt.Sprintf("Method %s failed: Type not found", g.Request.Method))
+		return
+	}
+
 	var req TypeRequest
 	if err := g.ShouldBindJSON(&req); err != nil {
 		g.JSON(http.StatusBadRequest, gin.H{"error": "type_name is required"})
@@ -128,13 +138,15 @@ func (t *TypeHandler) UpdateType(g *gin.Context) {
 		return
 	}
 
+	// Preserve created_at and update other fields
 	typeEntity := domain.Type{
-		ID:       objID,
-		TypeName: req.TypeName,
+		ID:        objID,
+		TypeName:  req.TypeName,
+		CreatedAt: existingType.CreatedAt, // Preserve original created_at
+		UpdatedAt: time.Now(),             // Update timestamp
 	}
 
-	err = t.useCase.UpdateType(g.Request.Context(), &typeEntity)
-	if err != nil {
+	if err := t.useCase.UpdateType(g.Request.Context(), &typeEntity); err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
 		return

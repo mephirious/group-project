@@ -7,8 +7,8 @@ const ConfirmModal = ({ message, onConfirm, onCancel }) => {
       <div className="confirm-modal-content" onClick={(e) => e.stopPropagation()}>
         <p>{message}</p>
         <div className="confirm-modal-buttons">
-          <button onClick={onConfirm}>Confirm</button>
-          <button onClick={onCancel}>Cancel</button>
+          <button onClick={onConfirm} className='confirm-ok'>Confirm</button>
+          <button onClick={onCancel} className='confirm-cancel'>Cancel</button>
         </div>
       </div>
     </div>

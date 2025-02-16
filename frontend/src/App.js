@@ -9,6 +9,8 @@ import AdminEditPage from './pages/AdminEditPage/AdminEditPage';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { verifyAuth } from './store/authSlice';
+import BrandProductPage from './pages/BrandProductsPage/BrandProductsPage';
+import TypeProductPage from './pages/TypeProductsPage/TypeProductsPage';
 
 function App() {
   const dispatch = useDispatch();
@@ -25,6 +27,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/product/:id" element={<ProductSingle />} />
           <Route path="/category/:category" element={<CategoryProduct />} />
+          <Route path="/brands/:brand" element={<BrandProductPage />} />
+          <Route path="/types/:type" element={<TypeProductPage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/search/:searchTerm" element={<Search />} />
           <Route path="/login" element={<Login />} />

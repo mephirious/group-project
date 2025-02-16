@@ -116,7 +116,7 @@ const ProductSinglePage = () => {
             </div>
             <div className='product-single-r'>
               <div className='product-details font-manrope'>
-                <div className='title fs-20 fw-5'>{product?.title}</div>
+                <div className='title fs-20 fw-5'>{product?.model_name}</div>
                 <p className='para fw-3 fs-15'>{product?.description}</p>
                 <div className='info flex align-center flex-wrap fs-14'>
                   <div className='rating'>

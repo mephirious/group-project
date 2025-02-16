@@ -5,7 +5,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import { getSidebarStatus, setSidebarOff } from '../../store/sidebarSlice';
 import { fetchAsyncCategories, getAllCategories } from '../../store/categorySlice';
 import { getAllBrands } from '../../store/brandsSlice';
-import { getAllTypes } from '../../store/typesSlice';
+import { fetchAsyncTypes, getAllTypes } from '../../store/typesSlice';
 
 const Sidebar = () => {
 
@@ -17,6 +17,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     dispatch(fetchAsyncCategories())
+    dispatch(fetchAsyncTypes())
   }, [dispatch])
 
   return (

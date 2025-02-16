@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/mephirious/group-project/services/products-service/domain"
@@ -54,7 +53,6 @@ func (i *inventoryRepository) GetInventoryByProductID(ctx context.Context, produ
 		return nil, err
 	}
 
-	fmt.Println(inventory)
 	return &inventory, nil
 }
 

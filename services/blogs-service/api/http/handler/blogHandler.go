@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -34,7 +35,12 @@ func NewBlogPostHandler(router *gin.Engine, useCase usecase.BlogPostUseCase) {
 }
 
 func (h *BlogPostHandler) GetAllBlogPosts(g *gin.Context) {
-	posts, err := h.useCase.GetAllBlogPosts(g.Request.Context())
+	limit, _ := strconv.Atoi(g.DefaultQuery("limit", "10"))
+	skip, _ := strconv.Atoi(g.DefaultQuery("skip", "0"))
+	sortField := g.DefaultQuery("sortField", "created_at")
+	sortOrder := g.DefaultQuery("sortOrder", "desc")
+
+	posts, err := h.useCase.GetAllBlogPosts(g.Request.Context(), limit, skip, sortField, sortOrder)
 	if err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))

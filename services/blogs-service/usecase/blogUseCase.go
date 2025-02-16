@@ -10,7 +10,7 @@ import (
 )
 
 type BlogPostUseCase interface {
-	GetAllBlogPosts(ctx context.Context) ([]domain.BlogPost, error)
+	GetAllBlogPosts(ctx context.Context, limit, skip int, sortField, sortOrder string) ([]domain.BlogPost, error)
 	GetBlogPostByID(ctx context.Context, id primitive.ObjectID) (*domain.BlogPost, error)
 	GetBlogPostByTitle(ctx context.Context, title string) (*domain.BlogPost, error)
 	CreateBlogPost(ctx context.Context, post *domain.BlogPost) error
@@ -28,8 +28,8 @@ func NewBlogPostUseCase(repository repository.BlogPostRepository) *blogPostUseCa
 	}
 }
 
-func (u *blogPostUseCase) GetAllBlogPosts(ctx context.Context) ([]domain.BlogPost, error) {
-	return u.blogPostRepository.GetAllBlogPosts(ctx)
+func (u *blogPostUseCase) GetAllBlogPosts(ctx context.Context, limit, skip int, sortField, sortOrder string) ([]domain.BlogPost, error) {
+	return u.blogPostRepository.GetAllBlogPosts(ctx, limit, skip, sortField, sortOrder)
 }
 
 func (u *blogPostUseCase) GetBlogPostByID(ctx context.Context, id primitive.ObjectID) (*domain.BlogPost, error) {

@@ -2,6 +2,7 @@ import {configureStore} from "@reduxjs/toolkit";
 import sidebarReducer from "./sidebarSlice";
 import categoryReducer from "./categorySlice";
 import brandReducer from "./brandsSlice";
+import typeReducer from "./typesSlice";
 import productReducer from "./productSlice";
 import cartReducer from "./cartSlice";
 import searchReducer from "./searchSlice";
@@ -14,6 +15,7 @@ const store = configureStore({
         sidebar: sidebarReducer,
         category: categoryReducer,
         brand: brandReducer,
+        type: typeReducer,
         product: productReducer,
         cart: cartReducer,
         search: searchReducer,

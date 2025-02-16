@@ -30,6 +30,18 @@ func NewReviewUseCase(repository repository.ReviewRepository) *reviewUseCase {
 	}
 }
 
+func (u *reviewUseCase) CreateReview(ctx context.Context, review *domain.Review) error {
+	existingReview, err := u.reviewRepository.GetReviewsByCustomerAndProductIDs(ctx, review.ProductID, review.CustomerID)
+	if err != nil {
+		return err
+	}
+	if existingReview != nil {
+		return errors.New("a review already exists for this customer and product")
+	}
+
+	return u.reviewRepository.CreateReview(ctx, review)
+}
+
 func (u *reviewUseCase) GetAllReviews(ctx context.Context, limit, skip int, sortField, sortOrder string, verified *bool) ([]domain.Review, error) {
 	return u.reviewRepository.GetAllReviews(ctx, limit, skip, sortField, sortOrder, verified)
 }
@@ -86,16 +98,4 @@ func (u *reviewUseCase) UpdateReview(ctx context.Context, id primitive.ObjectID,
 
 func (u *reviewUseCase) DeleteReview(ctx context.Context, id primitive.ObjectID) error {
 	return u.reviewRepository.DeleteReview(ctx, id)
-}
-
-func (u *reviewUseCase) CreateReview(ctx context.Context, review *domain.Review) error {
-	existingReview, err := u.reviewRepository.GetReviewsByCustomerAndProductIDs(ctx, review.ID, review.CustomerID)
-	if err != nil {
-		return err
-	}
-	if existingReview != nil {
-		return errors.New("product already exists")
-	}
-
-	return u.reviewRepository.CreateReview(ctx, review)
 }

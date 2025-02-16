@@ -25,7 +25,59 @@ func NewReviewHandler(router *gin.Engine, useCase usecase.ReviewUseCase) {
 	router.GET("/reviews/customer/:customer_id", handler.GetReviewsByCustomerID)
 	router.GET("/reviews/product/:product_id", handler.GetReviewsByProductID)
 	router.PUT("/reviews/:id", handler.UpdateReview)
+	router.POST("/reviews", handler.CreateReview)
 	router.DELETE("/reviews/:id", handler.DeleteReview)
+}
+
+func (h *ReviewHandler) CreateReview(g *gin.Context) {
+	var req struct {
+		CustomerID string  `json:"customer_id" binding:"required"`
+		ProductID  string  `json:"product_id" binding:"required"`
+		Content    string  `json:"content" binding:"required"`
+		Rating     float64 `json:"rating" binding:"required"`
+	}
+
+	if err := g.ShouldBindJSON(&req); err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
+		return
+	}
+
+	customerID, err := primitive.ObjectIDFromHex(req.CustomerID)
+	if err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"error": "Invalid customer ID"})
+		slog.Error(fmt.Sprintf("Method %s failed: Invalid customer ID", g.Request.Method))
+		return
+	}
+
+	productID, err := primitive.ObjectIDFromHex(req.ProductID)
+	if err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"error": "Invalid product ID"})
+		slog.Error(fmt.Sprintf("Method %s failed: Invalid product ID", g.Request.Method))
+		return
+	}
+
+	verified := false
+
+	review := domain.Review{
+		ID:         primitive.NewObjectID(),
+		CustomerID: customerID,
+		ProductID:  productID,
+		Content:    req.Content,
+		Rating:     req.Rating,
+		Verified:   verified,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+
+	if err := h.useCase.CreateReview(g.Request.Context(), &review); err != nil {
+		g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
+		return
+	}
+
+	g.JSON(http.StatusCreated, review)
+	slog.Info(fmt.Sprintf("Method %s finished successfully", g.Request.Method))
 }
 
 func (h *ReviewHandler) GetAllReviews(g *gin.Context) {
@@ -227,54 +279,5 @@ func (h *ReviewHandler) DeleteReview(g *gin.Context) {
 	}
 
 	g.JSON(http.StatusOK, gin.H{"message": "Review deleted successfully"})
-	slog.Info(fmt.Sprintf("Method %s finished successfully", g.Request.Method))
-}
-
-func (h *ReviewHandler) CreateReview(g *gin.Context) {
-	var req struct {
-		CustomerID string  `json:"customer_id" binding:"required"`
-		ProductID  string  `json:"product_id" binding:"required"`
-		Content    string  `json:"content" binding:"required"`
-		Rating     float64 `json:"rating" binding:"required"`
-		Verified   bool    `json:"verified"`
-	}
-
-	if err := g.ShouldBindJSON(&req); err != nil {
-		g.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
-		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
-		return
-	}
-
-	customerID, err := primitive.ObjectIDFromHex(req.CustomerID)
-	if err != nil {
-		g.JSON(http.StatusBadRequest, gin.H{"error": "Invalid customer ID"})
-		slog.Error(fmt.Sprintf("Method %s failed: Invalid customer ID", g.Request.Method))
-		return
-	}
-
-	productID, err := primitive.ObjectIDFromHex(req.ProductID)
-	if err != nil {
-		g.JSON(http.StatusBadRequest, gin.H{"error": "Invalid product ID"})
-		slog.Error(fmt.Sprintf("Method %s failed: Invalid product ID", g.Request.Method))
-		return
-	}
-
-	review := domain.Review{
-		CustomerID: customerID,
-		ProductID:  productID,
-		Content:    req.Content,
-		Rating:     req.Rating,
-		Verified:   req.Verified,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
-	}
-
-	if err := h.useCase.CreateReview(g.Request.Context(), &review); err != nil {
-		g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
-		return
-	}
-
-	g.JSON(http.StatusCreated, review)
 	slog.Info(fmt.Sprintf("Method %s finished successfully", g.Request.Method))
 }

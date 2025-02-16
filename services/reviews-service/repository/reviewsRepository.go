@@ -34,6 +34,18 @@ func NewReviewRepository(db *mongo.Database) *reviewRepository {
 	}
 }
 
+func (r *reviewRepository) CreateReview(ctx context.Context, review *domain.Review) error {
+	review.CreatedAt = time.Now()
+	review.UpdatedAt = time.Now()
+
+	_, err := r.collection.InsertOne(ctx, review)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *reviewRepository) GetAllReviews(ctx context.Context, limit, skip int, sortField string, sortOrder string, verified *bool) ([]domain.Review, error) {
 	var reviews []domain.Review
 
@@ -196,18 +208,6 @@ func (r *reviewRepository) UpdateReview(ctx context.Context, id primitive.Object
 
 func (r *reviewRepository) DeleteReview(ctx context.Context, id primitive.ObjectID) error {
 	_, err := r.collection.DeleteOne(ctx, bson.M{"_id": id})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (r *reviewRepository) CreateReview(ctx context.Context, review *domain.Review) error {
-	review.CreatedAt = time.Now()
-	review.UpdatedAt = time.Now()
-
-	_, err := r.collection.InsertOne(ctx, review)
 	if err != nil {
 		return err
 	}

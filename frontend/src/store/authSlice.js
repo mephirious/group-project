@@ -8,14 +8,13 @@ const initialState = {
     registerError: null,
     authStatus: 'idle',
     authError: null,
+    user: null,
 };
 
 export const loginAsync = createAsyncThunk('auth/login', async ({ email, password }) => {
     const response = await fetch(`${BASE_URL}auth/api/v1/login`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
         credentials: 'include',
     });
@@ -28,9 +27,7 @@ export const loginAsync = createAsyncThunk('auth/login', async ({ email, passwor
 export const registerAsync = createAsyncThunk('auth/register', async ({ email, password, confirmPassword }) => {
     const response = await fetch(`${BASE_URL}auth/api/v1/register`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, confirmPassword }),
         credentials: 'include',
     });
@@ -73,6 +70,21 @@ export const logoutAsync = createAsyncThunk('auth/logout', async () => {
     return await response.json();
 });
 
+export const verifyAuth = createAsyncThunk('auth/verifyAuth', async (_, { dispatch, rejectWithValue }) => {
+    try {
+        const validated = await dispatch(validateTokenAsync()).unwrap();
+        return validated;
+    } catch (error) {
+        try {
+            await dispatch(refreshTokenAsync()).unwrap();
+            const validatedAfterRefresh = await dispatch(validateTokenAsync()).unwrap();
+            return validatedAfterRefresh;
+        } catch (refreshError) {
+            return rejectWithValue(refreshError);
+        }
+    }
+});
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -83,8 +95,9 @@ const authSlice = createSlice({
                 state.loginStatus = 'loading';
                 state.loginError = null;
             })
-            .addCase(loginAsync.fulfilled, (state) => {
+            .addCase(loginAsync.fulfilled, (state, action) => {
                 state.loginStatus = 'succeeded';
+                state.user = action.payload;
             })
             .addCase(loginAsync.rejected, (state, action) => {
                 state.loginStatus = 'failed';
@@ -135,6 +148,19 @@ const authSlice = createSlice({
             .addCase(logoutAsync.rejected, (state, action) => {
                 state.authStatus = 'failed';
                 state.authError = action.error.message;
+            })
+            .addCase(verifyAuth.pending, (state) => {
+                state.authStatus = 'loading';
+                state.authError = null;
+            })
+            .addCase(verifyAuth.fulfilled, (state, action) => {
+                state.authStatus = 'succeeded';
+                state.user = action.payload;
+            })
+            .addCase(verifyAuth.rejected, (state, action) => {
+                state.authStatus = 'failed';
+                state.authError = action.payload || action.error.message;
+                state.user = null;
             });
     },
 });

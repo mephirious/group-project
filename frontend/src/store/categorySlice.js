@@ -50,7 +50,7 @@ export const fetchAsyncCategories = createAsyncThunk('categories/fetch', async()
 });
 
 export const fetchAsyncProductsOfCategory = createAsyncThunk('category-products/fetch', async(category) => {
-    const response = await fetch(`${BASE_URL}products/products`);
+    const response = await fetch(`${BASE_URL}products/products?limit=100`);
     const data = await response.json();
     return data.filter(product => product.category === category);
 });

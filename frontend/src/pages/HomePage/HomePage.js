@@ -16,7 +16,7 @@ const HomePage = () => {
   const categories = useSelector(getAllCategories);
   const brands = useSelector(getAllBrands);
   useEffect(() => {
-    dispatch(fetchAsyncProducts(50));
+    dispatch(fetchAsyncProducts(100));
     dispatch(fetchAsyncBrands());
     dispatch(fetchAsyncPosts());
   }, []);
@@ -61,7 +61,7 @@ const HomePage = () => {
                   <div className='title-md'>
                     <h3>{brand}</h3>
                   </div>
-                  {productStatus === STATUS.LOADING ? <Loader /> : <ProductList products={brandProducts} />}
+                  {productStatus === STATUS.LOADING ? <Loader /> : <ProductList brand={{name:brand, id:index}} products={brandProducts} />}
                 </div>
               );
             })}

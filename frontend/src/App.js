@@ -1,47 +1,47 @@
 import './App.scss';
-// react router v6
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
-// pages
-import {Home, CategoryProduct, ProductSingle, Cart, Search, Login, Register, User, LaptopComparison} from "./pages/index";
-// components
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Home, CategoryProduct, ProductSingle, Cart, Search, Login, Register, User, LaptopComparison } from "./pages/index";
 import Header from "./components/Header/Header";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Footer from "./components/Footer/Footer";
-import store from "./store/store";
-import {Provider} from "react-redux";
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import AdminEditPage from './pages/AdminEditPage/AdminEditPage';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { verifyAuth } from './store/authSlice';
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(verifyAuth());
+  }, [dispatch]);
+
   return (
     <div className="App">
-      <Provider store = {store}>
-        <BrowserRouter>
-          <Header />
-          <Sidebar />
-
-          <Routes>
-            {/* home page route */}
-            <Route path = "/" element = {<Home />} />
-            {/* single product route */}
-            <Route path = "/product/:id" element = {<ProductSingle />} />
-            {/* category wise product listing route */}
-            <Route path = "/category/:category" element = {<CategoryProduct />} />
-            {/* cart */}
-            <Route path = "/cart" element = {<Cart />} />
-            {/* searched products */}
-            <Route path = "/search/:searchTerm" element = {<Search />} />
-            {/* login */}
-            <Route path = "/login" element = {<Login />} />
-            {/* register */}
-            <Route path = "/register" element = {<Register />} />
-            {/* register */}
-            <Route path = "/user" element = {<User />} />
-            {/* laptop comparison route */}
-            <Route path="/compare" element={<LaptopComparison />} />
-         </Routes>
-
-          <Footer />
-        </BrowserRouter>
-      </Provider>
+      <BrowserRouter>
+        <Header />
+        <Sidebar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/product/:id" element={<ProductSingle />} />
+          <Route path="/category/:category" element={<CategoryProduct />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/search/:searchTerm" element={<Search />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/user" element={<User />} />
+          <Route path="/compare" element={<LaptopComparison />} />
+          <Route
+            path="/admin/edit"
+            element={
+              <ProtectedRoute adminOnly={true}>
+                <AdminEditPage />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
     </div>
   );
 }

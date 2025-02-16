@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getAllCategories } from '../../store/categorySlice';
 import ProductList from "../../components/ProductList/ProductList";
 import { fetchAsyncProducts, getAllProducts, getAllProductsStatus } from '../../store/productSlice';
+import NewsSlider from '../../components/Slider/NewsSlider';
+import { fetchAsyncPosts, getAllPosts, getAllPostsStatus } from '../../store/newsSlice';
 import Loader from "../../components/Loader/Loader";
 import { STATUS } from '../../utils/status';
 import { fetchAsyncBrands, getAllBrands } from '../../store/brandsSlice';
@@ -16,10 +18,13 @@ const HomePage = () => {
   useEffect(() => {
     dispatch(fetchAsyncProducts(50));
     dispatch(fetchAsyncBrands());
+    dispatch(fetchAsyncPosts());
   }, []);
 
   const products = useSelector(getAllProducts);
   const productStatus = useSelector(getAllProductsStatus);
+  const posts = useSelector(getAllPosts);
+  const newsStatus = useSelector(getAllPostsStatus);
 
   // randomizing the products in the list
   const tempProducts = [];
@@ -33,11 +38,6 @@ const HomePage = () => {
       tempProducts[i] = products[randomIndex];
     }
   }
-
-  let catProductsOne = products.filter(product => product.brand === brands[0]);
-  let catProductsTwo = products.filter(product => product.brand === brands[1]);
-  let catProductsThree = products.filter(product => product.brand === brands[2]);
-  let catProductsFour = products.filter(product => product.brand === brands[3]);
 
   return (
     <main>
@@ -65,6 +65,10 @@ const HomePage = () => {
                 </div>
               );
             })}
+
+            <div className='categories-item' id='news'>             
+              {newsStatus === STATUS.LOADING ? <Loader /> : <NewsSlider posts={posts} />}
+            </div>
           </div>
         </div>
       </div>

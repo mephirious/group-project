@@ -1,0 +1,140 @@
+@import "../../App.scss";
+
+.laptop-comparison {
+  padding: 20px 0;
+
+  .comparison-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .comparison-slide {
+    padding: 0 10px;
+  }
+
+  .laptop-card {
+    border-radius: 8px;
+    box-shadow: rgba(50, 50, 93, 0.1) 0px 2px 5px -1px;
+    background: #fff;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: $transition-ease;
+
+    &:hover {
+      box-shadow: rgba(50, 50, 93, 0.15) 0px 4px 10px -1px;
+    }
+
+    .laptop-image {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      border-radius: 8px 8px 0 0;
+      margin-bottom: 15px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .laptop-details {
+      width: 100%;
+
+      .detail-row {
+        display: flex;
+        align-items: center;
+        height: 40px; // Fixed height to ensure alignment
+        padding: 5px 0;
+        border-bottom: 1px solid #f0f0f0;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .detail-label {
+          font-weight: 500;
+          color: #555;
+          text-transform: capitalize;
+          min-width: 120px;
+          text-align: left;
+        }
+
+        .detail-value {
+          font-weight: 600;
+          color: #333;
+          flex: 1;
+          text-align: right;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+
+    .laptop-actions {
+      margin-top: 15px;
+      width: 100%;
+      text-align: center;
+
+      .delete-btn {
+        background: transparent;
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: $transition-ease;
+
+        &:hover {
+          background: #f8f8f8;
+        }
+      }
+    }
+  }
+
+  .comparison-footer {
+    margin-top: 20px;
+    text-align: center;
+
+    .clear-comparison-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      transition: $transition-ease;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .slick-prev,
+  .slick-next {
+    z-index: 10;
+    width: 35px;
+    height: 35px;
+  }
+
+  .slick-prev {
+    left: -40px;
+  }
+
+  .slick-next {
+    right: -40px;
+  }
+
+  .slick-prev:before,
+  .slick-next:before {
+    font-size: 20px;
+    color: #333;
+  }
+}

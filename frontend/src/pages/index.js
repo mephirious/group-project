@@ -6,5 +6,6 @@ import Search from "./SearchPage/SearchPage";
 import Login from "./UserPage/LoginPage";
 import Register from "./UserPage/RegisterPage";
 import User from "./UserPage/UserPage";
+import LaptopComparison from "./LaptopComparisonPage/LaptopComparison";
 
-export {Home, CategoryProduct, ProductSingle, Cart, Search, Login, Register, User};
+export {Home, CategoryProduct, ProductSingle, Cart, Search, Login, Register, User, LaptopComparison};

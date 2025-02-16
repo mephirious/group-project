@@ -2,7 +2,7 @@ import './App.scss';
 // react router v6
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 // pages
-import {Home, CategoryProduct, ProductSingle, Cart, Search, Login, Register, User} from "./pages/index";
+import {Home, CategoryProduct, ProductSingle, Cart, Search, Login, Register, User, LaptopComparison} from "./pages/index";
 // components
 import Header from "./components/Header/Header";
 import Sidebar from "./components/Sidebar/Sidebar";
@@ -35,7 +35,9 @@ function App() {
             <Route path = "/register" element = {<Register />} />
             {/* register */}
             <Route path = "/user" element = {<User />} />
-          </Routes>
+            {/* laptop comparison route */}
+            <Route path="/compare" element={<LaptopComparison />} />
+         </Routes>
 
           <Footer />
         </BrowserRouter>

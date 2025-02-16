@@ -7,6 +7,7 @@ import cartReducer from "./cartSlice";
 import searchReducer from "./searchSlice";
 import authReducer from "./authSlice";
 import postReducer from "./newsSlice";
+import comparisonReducer from './comparisonSlice';
 
 const store = configureStore({
     reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
         search: searchReducer,
         auth: authReducer,
         post: postReducer,
+        comparison: comparisonReducer,
     }
 });
 

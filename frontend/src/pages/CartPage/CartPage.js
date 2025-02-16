@@ -33,6 +33,9 @@ const CartPage = () => {
                 <span className='cart-ctxt'>S.N.</span>
               </div>
               <div className='cart-cth'>
+                <span className='cart-ctxt'>Img</span>
+              </div>
+              <div className='cart-cth'>
                 <span className='cart-ctxt'>Product</span>
               </div>
               <div className='cart-cth'>
@@ -59,8 +62,12 @@ const CartPage = () => {
                       <span className='cart-ctxt'>{idx + 1}</span>
                     </div>
                     <div className='cart-ctd'>
-                      <span className='cart-ctxt'>{cart?.model_name}</span>
+                      <img src={cart?.images[0] || ''} alt={cart?.model_name} className='cart-ctxt' />
                     </div>
+                    <Link to={`/product/${cart.id}`} className="cart-ctd">
+                    <span className='cart-ctxt'>{cart?.model_name}</span>
+                      View Details
+                    </Link>
                     <div className='cart-ctd'>
                       <span className='cart-ctxt'>{formatPrice(cart?.discountedPrice)}</span>
                     </div>

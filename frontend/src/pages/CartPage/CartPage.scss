@@ -44,7 +44,7 @@
     .cart-ctable{
         min-width: 1000px;
         .cart-ctr{
-            grid-template-columns: 1fr 4fr 2fr 2fr 2fr 2fr;
+            grid-template-columns: 1fr 1fr 4fr 2fr 2fr 2fr 2fr;
             min-height: 40px;
             border-bottom: 1px solid $clr-whitesmoke;
             display: grid;
@@ -58,14 +58,24 @@
             border-radius: 3px;
             color: rgba(0, 0, 0, 0.6);
         }
-        .cart-cbody{
+        .cart-cbody {
             padding-right: 2rem;
             padding-left: 2rem;
-            box-shadow: rgba(60, 64, 67, 0.01) 0px 1px 2px 0px, rgba(60, 64, 67, 0.01) 0px 1px 3px 1px;
+            box-shadow: rgba(60, 64, 67, 0.01) 0px 1px 2px 0px,
+                        rgba(60, 64, 67, 0.01) 0px 1px 3px 1px;
             border-radius: 3px;
             font-size: 14.5px;
             color: rgba(0, 0, 0, 0.6);
-        }
+          
+            .cart-ctd {
+              img {
+                height: 60px;
+                width: auto;
+                object-fit: cover;
+              }
+            }
+          }
+          
         .delete-btn{
             font-size: 14px;
             transition: $transition-ease;

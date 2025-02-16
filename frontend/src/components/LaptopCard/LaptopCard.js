@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { formatPrice } from '../../utils/helpers';
+import "./LaptopCard.scss";
 
 const DetailRow = ({ label, value }) => (
     <div className="detail-row">
@@ -38,6 +40,9 @@ const LaptopCard = ({ laptop, allSpecKeys, onRemove }) => (
       })}
     </div>
     <div className="laptop-actions">
+      <Link to={`/product/${laptop.id}`} className="view-details-btn">
+        View Details
+      </Link>
       <button
         type="button"
         className="delete-btn text-dark"

@@ -6,6 +6,9 @@ const Post = ({ post }) => {
   let formattedDate = new Date(post?.created_at);
   let date = `${formattedDate.getDate().toString().padStart(2, '0')}.${(formattedDate.getMonth() + 1).toString().padStart(2, '0')}.${formattedDate.getFullYear()}`;
   return (
+    
+    <Link to = {`/blog/${post?.id}`} key = {post?.id}>
+
     <div className='post-item bg-white' key={post?.id}>
       <div className='post-item-img'>
         <img className='img-cover' src={post?.image || ""} alt={post?.title} />
@@ -18,6 +21,7 @@ const Post = ({ post }) => {
         </div>
       </div>
     </div>
+    </Link>
   );
 };
 

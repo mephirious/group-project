@@ -6,28 +6,15 @@ import Post from '../Post/Post';
 import "./HeaderSlider.scss";
 
 const NewsSlider = ({ posts }) => {
-  const settings = {
-    autoplay: false,
-    arrows: true, 
-    dots: false,
-    infinite: false,
+  let settings = {
+    autoplay: true,
+    autoplaySpeed: 1500,
+    arrows: false,
+    dots: true,
+    infinite: true,
     speed: 500,
     slidesToShow: 4,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 1200,
-        settings: { slidesToShow: 3 }
-      },
-      {
-        breakpoint: 992,
-        settings: { slidesToShow: 2 }
-      },
-      {
-        breakpoint: 768,
-        settings: { slidesToShow: 1 }
-      }
-    ]
+    slidesToScroll: 1
   };
 
   return (

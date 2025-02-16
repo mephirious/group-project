@@ -52,7 +52,7 @@ func main() {
 	http.Handle("/products/products", middleware.CORS(middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions)))
 	http.Handle("/products/types", middleware.CORS(middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL)), brandPermissions)))
 
-	http.Handle("/blogs/blog-posts", middleware.CORS(middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(reviewsServiceURL)), brandPermissions)))
+	http.Handle("/blogs/blog-posts", middleware.CORS(middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(blogsServiceURL)), brandPermissions)))
 
 	reviewPermissions := map[string]string{
 		"GET":    "",

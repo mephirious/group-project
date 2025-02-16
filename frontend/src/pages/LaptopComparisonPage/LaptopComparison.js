@@ -37,14 +37,14 @@ const LaptopComparison = () => {
     autoplay: false,
     arrows: true,
     dots: false,
-    infinite: false,
+    infinite: true,
     speed: 500,
     slidesToShow: 4,
-    slidesToScroll: 1,
+    swipeToSlide: false,
     responsive: [
       { breakpoint: 1200, settings: { slidesToShow: 3 } },
       { breakpoint: 992, settings: { slidesToShow: 2 } },
-      { breakpoint: 768, settings: { slidesToShow: 1 } },
+      { breakpoint: 768, settings: { slidesToShow: 1, vertical: true, verticalSwiping: true } },
     ],
   };
 

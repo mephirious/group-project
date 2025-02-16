@@ -14,8 +14,4 @@
     @media screen and (min-width: 1400px){
         grid-template-columns: repeat(4, 1fr);
     }
-
-    @media screen and (min-width: 1500px){
-        grid-template-columns: repeat(5, 1fr);
-    }
 }

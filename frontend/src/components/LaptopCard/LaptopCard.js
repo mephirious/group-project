@@ -27,7 +27,7 @@ const LaptopCard = ({ laptop, allSpecKeys, onRemove }) => (
       <DetailRow label="Type" value={laptop.type} />
       
       {allSpecKeys.map(key => {
-        const value = (laptop.specifications && laptop.specifications[key]) || '-';
+        const value = (laptop.specifications && laptop.specifications[key]) || 'N/A';
         const label = key.charAt(0).toUpperCase() + key.slice(1);
         return (
           <DetailRow

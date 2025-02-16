@@ -1,4 +1,4 @@
-.popup-message{
+.popup-message {
     padding: 2rem;
     position: fixed;
     top: 50%;
@@ -8,15 +8,33 @@
     padding-top: 30px;
     padding-bottom: 30px;
     border-radius: 3px;
-
-    .popup-message-icon{
-        margin-bottom: 1.7rem;
-        img{
-            width: 45px;
-            height: 45px;
-            margin-right: auto;
-            margin-left: auto;
-        }
-    }
+    opacity: 0;
+    animation: fadePopup 2s forwards;
     
-}
+    .popup-message-icon {
+      margin-bottom: 1.7rem;
+      
+      img {
+        width: 45px;
+        height: 45px;
+        margin: 0 auto;
+        display: block;
+      }
+    }
+  }
+  
+  @keyframes fadePopup {
+    0% {
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  

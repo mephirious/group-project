@@ -30,17 +30,26 @@ const ProductSinglePage = () => {
 
   useEffect(() => {
     dispatch(fetchAsyncProductSingle(id));
+  }, [id]);
+  
+  useEffect(() => {
     if (cartMessageStatus) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         dispatch(setCartMessageOff());
       }, 2000);
+      return () => clearTimeout(timer);
     }
+  }, [cartMessageStatus, dispatch]);
+  
+  useEffect(() => {
     if (comparisonMessageStatus) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         dispatch(setComparisonMessageOff());
       }, 2000);
+      return () => clearTimeout(timer);
     }
-  }, [id, cartMessageStatus, comparisonMessageStatus]);
+  }, [comparisonMessageStatus, dispatch]);
+  
 
   useEffect(() => {
     if (product?.images?.length) {
@@ -137,6 +146,9 @@ const ProductSinglePage = () => {
                     <div className='discount bg-orange fs-13 text-white fw-6 font-poppins'>
                       {product?.discountPercentage}% OFF
                     </div>
+                  </div>
+                  <div className='brand'>
+                    <span className='mx-1'>{product?.content?.replace("-", " ")}</span>
                   </div>
                   <div className='specifications'>
                     {product?.specifications && Object.entries(product.specifications).map(([key, value]) => {

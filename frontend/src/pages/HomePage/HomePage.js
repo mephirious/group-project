@@ -18,7 +18,7 @@ const HomePage = () => {
   useEffect(() => {
     dispatch(fetchAsyncProducts(100));
     dispatch(fetchAsyncBrands());
-    dispatch(fetchAsyncPosts());
+    dispatch(fetchAsyncPosts(50));
   }, []);
 
   const products = useSelector(getAllProducts);

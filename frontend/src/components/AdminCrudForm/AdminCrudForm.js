@@ -1,22 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import {
+  createCategory,
+  updateCategory,
+  deleteCategory,
   createBrand,
   updateBrand,
   deleteBrand,
   createType,
   updateType,
-  deleteType
+  deleteType,
 } from '../../store/adminSlice';
-import './AdminCrudForm.scss';
 import ConfirmModal from '../ConfirmModal/ConfirmModal';
+import './AdminCrudForm.scss';
 
-const AdminCrudForm = ({ entity }) => {
+const entityConfig = {
+  brands: {
+    field: 'brand_name',
+    label: 'Brand',
+    actions: {
+      create: createBrand,
+      update: updateBrand,
+      delete: deleteBrand,
+    },
+  },
+  types: {
+    field: 'type_name',
+    label: 'Type',
+    actions: {
+      create: createType,
+      update: updateType,
+      delete: deleteType,
+    },
+  },
+  categories: {
+    field: 'category_name',
+    label: 'Category',
+    actions: {
+      create: createCategory,
+      update: updateCategory,
+      delete: deleteCategory,
+    },
+  },
+};
+
+const AdminCrudForm = ({ entity, selectedData, onActionSuccess }) => {
   const dispatch = useDispatch();
   const [operation, setOperation] = useState('create');
   const [formData, setFormData] = useState({});
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
+
+  const config = entityConfig[entity];
+
+  useEffect(() => {
+    if (selectedData) {
+      setOperation('update');
+      setFormData({ id: selectedData.id, [config.field]: selectedData[config.field] });
+    }
+  }, [selectedData, config]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,22 +68,17 @@ const AdminCrudForm = ({ entity }) => {
     e.preventDefault();
     setShowConfirm(true);
     setPendingAction(() => () => {
-      if (entity === 'brands') {
-        if (operation === 'create') {
-          dispatch(createBrand({ brand_name: formData.brand_name }));
-        } else if (operation === 'update') {
-          dispatch(updateBrand({ id: formData.id, brandData: { brand_name: formData.brand_name } }));
-        } else if (operation === 'delete') {
-          dispatch(deleteBrand(formData.id));
-        }
-      } else if (entity === 'types' || entity === 'categories') {
-        if (operation === 'create') {
-          dispatch(createType({ type_name: formData.type_name }));
-        } else if (operation === 'update') {
-          dispatch(updateType({ id: formData.id, typeData: { type_name: formData.type_name } }));
-        } else if (operation === 'delete') {
-          dispatch(deleteType(formData.id));
-        }
+      if (operation === 'create') {
+        dispatch(config.actions.create({ [config.field]: formData[config.field] }));
+      } else if (operation === 'update') {
+        dispatch(
+          config.actions.update({
+            id: formData.id,
+            data: { [config.field]: formData[config.field] },
+          })
+        );
+      } else if (operation === 'delete') {
+        dispatch(config.actions.delete(formData.id));
       }
       setFormData({});
     });
@@ -51,17 +88,13 @@ const AdminCrudForm = ({ entity }) => {
     if (operation === 'create') {
       return (
         <div className="form-group">
-          {entity === 'brands' ? (
-            <>
-              <label>Brand Name</label>
-              <input type="text" name="brand_name" value={formData.brand_name || ''} onChange={handleChange} />
-            </>
-          ) : (
-            <>
-              <label>{entity === 'types' ? 'Type Name' : 'Category Name'}</label>
-              <input type="text" name="type_name" value={formData.type_name || ''} onChange={handleChange} />
-            </>
-          )}
+          <label>{config.label} Name</label>
+          <input
+            type="text"
+            name={config.field}
+            value={formData[config.field] || ''}
+            onChange={handleChange}
+          />
         </div>
       );
     } else if (operation === 'update') {
@@ -69,20 +102,22 @@ const AdminCrudForm = ({ entity }) => {
         <>
           <div className="form-group">
             <label>ID</label>
-            <input type="text" name="id" value={formData.id || ''} onChange={handleChange} />
+            <input
+              type="text"
+              name="id"
+              value={formData.id || ''}
+              onChange={handleChange}
+              readOnly={!!selectedData}
+            />
           </div>
           <div className="form-group">
-            {entity === 'brands' ? (
-              <>
-                <label>New Brand Name</label>
-                <input type="text" name="brand_name" value={formData.brand_name || ''} onChange={handleChange} />
-              </>
-            ) : (
-              <>
-                <label>{entity === 'types' ? 'New Type Name' : 'New Category Name'}</label>
-                <input type="text" name="type_name" value={formData.type_name || ''} onChange={handleChange} />
-              </>
-            )}
+            <label>New {config.label} Name</label>
+            <input
+              type="text"
+              name={config.field}
+              value={formData[config.field] || ''}
+              onChange={handleChange}
+            />
           </div>
         </>
       );
@@ -90,7 +125,12 @@ const AdminCrudForm = ({ entity }) => {
       return (
         <div className="form-group">
           <label>ID</label>
-          <input type="text" name="id" value={formData.id || ''} onChange={handleChange} />
+          <input
+            type="text"
+            name="id"
+            value={formData.id || ''}
+            onChange={handleChange}
+          />
         </div>
       );
     }
@@ -99,13 +139,22 @@ const AdminCrudForm = ({ entity }) => {
   return (
     <div className="admin-crud-form">
       <div className="operation-tabs">
-        <button className={operation === 'create' ? 'active' : ''} onClick={() => setOperation('create')}>
+        <button
+          className={operation === 'create' ? 'active' : ''}
+          onClick={() => setOperation('create')}
+        >
           Create
         </button>
-        <button className={operation === 'update' ? 'active' : ''} onClick={() => setOperation('update')}>
+        <button
+          className={operation === 'update' ? 'active' : ''}
+          onClick={() => setOperation('update')}
+        >
           Update
         </button>
-        <button className={operation === 'delete' ? 'active' : ''} onClick={() => setOperation('delete')}>
+        <button
+          className={operation === 'delete' ? 'active' : ''}
+          onClick={() => setOperation('delete')}
+        >
           Delete
         </button>
       </div>
@@ -117,10 +166,11 @@ const AdminCrudForm = ({ entity }) => {
       </form>
       {showConfirm && (
         <ConfirmModal
-          message={`Are you sure you want to ${operation} ${entity}?`}
+          message={`Are you sure you want to ${operation} ${config.label}?`}
           onConfirm={() => {
             pendingAction();
             setShowConfirm(false);
+            if (onActionSuccess) onActionSuccess();
           }}
           onCancel={() => setShowConfirm(false)}
         />

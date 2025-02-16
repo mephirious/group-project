@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/mephirious/group-project/services/products-service/domain"
@@ -78,8 +80,9 @@ func (p *productRepository) GetProductByID(ctx context.Context, id primitive.Obj
 }
 
 func (p *productRepository) GetProductByName(ctx context.Context, name string) (*domain.Product, error) {
+	escapedName := regexp.QuoteMeta(name)
 	regexPattern := bson.M{
-		"$regex":   name,
+		"$regex":   escapedName,
 		"$options": "i",
 	}
 
@@ -87,12 +90,15 @@ func (p *productRepository) GetProductByName(ctx context.Context, name string) (
 		"model_name": regexPattern,
 	}
 
+	fmt.Println("Here 1:", name, filter)
 	var product domain.Product
 	err := p.collection.FindOne(ctx, filter).Decode(&product)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
+			fmt.Println("Here 2:", name, filter, err)
 			return nil, nil
 		}
+		fmt.Println("Here 3:", name, filter, err)
 		return nil, err
 	}
 

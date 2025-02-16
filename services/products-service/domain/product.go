@@ -15,7 +15,7 @@ type Product struct {
 	TypeID         primitive.ObjectID `bson:"type_id" json:"type_id"`
 	Specifications Specifications     `bson:"specifications" json:"specifications"`
 	Content        string             `bson:"content" json:"content"`
-	LaptopImage    []string           `bson:"laptop_image" json:"images"`
+	Images         []string           `bson:"laptop_image" json:"images"`
 	CreatedAt      time.Time          `bson:"created_at" json:"created_at"`
 	UpdatedAt      time.Time          `bson:"updated_at" json:"updated_at"`
 }
@@ -44,7 +44,7 @@ type ProductView struct {
 	Type           string             `bson:"type" json:"type"`
 	Specifications Specifications     `bson:"specifications" json:"specifications"`
 	Content        string             `bson:"content" json:"content"`
-	LaptopImage    []string           `bson:"laptop_image" json:"images"`
+	Images         []string           `bson:"laptop_image" json:"images"`
 	CreatedAt      time.Time          `bson:"created_at" json:"created_at"`
 	UpdatedAt      time.Time          `bson:"updated_at" json:"updated_at"`
 }

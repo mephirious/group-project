@@ -16,7 +16,7 @@ type ProductRequest struct {
 	ModelName      string                `json:"model_name" binding:"required"`
 	Specifications domain.Specifications `json:"specifications" binding:"required"`
 	Content        string                `json:"content" binding:"required"`
-	LaptopImage    []string              `json:"laptop_image" binding:"required"`
+	Images         []string              `json:"images" binding:"required"`
 	BrandID        string                `json:"brand_id" binding:"required"`
 	CategoryID     string                `json:"category_id" binding:"required"`
 	TypeID         string                `json:"type_id" binding:"required"`
@@ -133,7 +133,7 @@ func (h *ProductHandler) CreateProduct(g *gin.Context) {
 		ModelName:      req.ModelName,
 		Specifications: req.Specifications,
 		Content:        req.Content,
-		LaptopImage:    req.LaptopImage,
+		Images:         req.Images,
 		BrandID:        brandID,
 		CategoryID:     categoryID,
 		TypeID:         typeID,
@@ -204,7 +204,7 @@ func (h *ProductHandler) UpdateProduct(g *gin.Context) {
 		ModelName:      req.ModelName,
 		Specifications: req.Specifications,
 		Content:        req.Content,
-		LaptopImage:    req.LaptopImage,
+		Images:         req.Images,
 		BrandID:        brandID,
 		CategoryID:     categoryID,
 		TypeID:         typeID,

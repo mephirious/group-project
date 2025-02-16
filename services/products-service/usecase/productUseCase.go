@@ -66,7 +66,7 @@ func (p *productUseCase) GetAllProducts(ctx context.Context, limit, skip int, so
 			Type:           Type.TypeName,
 			Specifications: product.Specifications,
 			Content:        product.Content,
-			LaptopImage:    product.LaptopImage,
+			Images:         product.Images,
 			CreatedAt:      product.CreatedAt,
 			UpdatedAt:      product.UpdatedAt,
 		}
@@ -106,7 +106,7 @@ func (p *productUseCase) GetProductByID(ctx context.Context, id primitive.Object
 		Type:           Type.TypeName,
 		Specifications: product.Specifications,
 		Content:        product.Content,
-		LaptopImage:    product.LaptopImage,
+		Images:         product.Images,
 		CreatedAt:      product.CreatedAt,
 		UpdatedAt:      product.UpdatedAt,
 	}, nil
@@ -144,7 +144,7 @@ func (p *productUseCase) GetProductByName(ctx context.Context, name string) (*do
 		Type:           Type.TypeName,
 		Specifications: product.Specifications,
 		Content:        product.Content,
-		LaptopImage:    product.LaptopImage,
+		Images:         product.Images,
 		CreatedAt:      product.CreatedAt,
 		UpdatedAt:      product.UpdatedAt,
 	}, nil

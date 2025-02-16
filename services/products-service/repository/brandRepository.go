@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/mephirious/group-project/services/products-service/domain"
@@ -55,7 +54,6 @@ func (b *brandRepository) GetBrandByID(ctx context.Context, id primitive.ObjectI
 		return nil, err
 	}
 
-	fmt.Println(brand)
 	return &brand, nil
 }
 

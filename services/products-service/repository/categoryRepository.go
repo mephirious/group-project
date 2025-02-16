@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/mephirious/group-project/services/products-service/domain"
@@ -55,7 +54,6 @@ func (c *categoryRepository) GetCategoryByID(ctx context.Context, id primitive.O
 		return nil, err
 	}
 
-	fmt.Println(category)
 	return &category, nil
 }
 

@@ -23,6 +23,8 @@ func ReverseProxyHandler(target string) http.HandlerFunc {
 
 		// Strip "/products" prefix
 		r.URL.Path = strings.TrimPrefix(r.URL.Path, "/products")
+		r.URL.Path = strings.TrimPrefix(r.URL.Path, "/reviews")
+		r.URL.Path = strings.TrimPrefix(r.URL.Path, "/blogs")
 
 		// Ensure the proxy forwards the correct host
 		r.Host = targetURL.Host

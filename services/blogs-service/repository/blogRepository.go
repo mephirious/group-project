@@ -8,10 +8,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type BlogPostRepository interface {
-	GetAllBlogPosts(ctx context.Context) ([]domain.BlogPost, error)
+	GetAllBlogPosts(ctx context.Context, limit, skip int, sortField, sortOrder string) ([]domain.BlogPost, error)
 	GetBlogPostByID(ctx context.Context, id primitive.ObjectID) (*domain.BlogPost, error)
 	GetBlogPostByTitle(ctx context.Context, title string) (*domain.BlogPost, error)
 	CreateBlogPost(ctx context.Context, post *domain.BlogPost) error
@@ -29,10 +30,22 @@ func NewBlogPostRepository(db *mongo.Database) *blogPostRepository {
 	}
 }
 
-func (r *blogPostRepository) GetAllBlogPosts(ctx context.Context) ([]domain.BlogPost, error) {
+func (r *blogPostRepository) GetAllBlogPosts(ctx context.Context, limit, skip int, sortField, sortOrder string) ([]domain.BlogPost, error) {
 	var posts []domain.BlogPost
 
-	cursor, err := r.collection.Find(ctx, bson.D{})
+	sortValue := 1
+	if sortOrder == "desc" {
+		sortValue = -1
+	}
+
+	sortOptions := bson.D{{Key: sortField, Value: sortValue}}
+
+	findOptions := options.Find()
+	findOptions.SetLimit(int64(limit))
+	findOptions.SetSkip(int64(skip))
+	findOptions.SetSort(sortOptions)
+
+	cursor, err := r.collection.Find(ctx, bson.D{}, findOptions)
 	if err != nil {
 		return nil, err
 	}

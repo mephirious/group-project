@@ -14,7 +14,7 @@ const Navbar = () => {
   const itemsCount = useSelector(getCartItemsCount);
   const user = useSelector((state) => state.auth.user);
   const [searchTerm, setSearchTerm] = useState("");
-  console.log(user)
+
   const handleSearchTerm = (e) => {
     e.preventDefault();
     setSearchTerm(e.target.value);

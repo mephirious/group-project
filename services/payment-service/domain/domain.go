@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 type Product struct {
 	ID       string `json:"_id" bson:"_id"`
 	Name     string `json:"model_name" bson:"model_name"`
@@ -12,5 +14,5 @@ type Order struct {
 	Products  []Product `bson:"products" json:"products"`
 	Amount    int64     `bson:"amount" json:"amount"`
 	Status    string    `bson:"status" json:"status"`
-	CreatedAt string    `bson:"created_at" json:"created_at"`
+	CreatedAt time.Time `bson:"created_at" json:"created_at"`
 }

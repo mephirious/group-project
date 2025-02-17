@@ -74,7 +74,7 @@ func (h *Handler) CreateCheckoutSession(c *gin.Context) {
 		Products:  products,
 		Amount:    totalAmount,
 		Status:    "pending",
-		CreatedAt: time.Now().Format(time.RFC3339),
+		CreatedAt: time.Now(),
 	}
 
 	collection := h.MongoClient.Database(h.Config.Database.Name).Collection("orders")

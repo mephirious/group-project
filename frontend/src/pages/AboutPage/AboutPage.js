@@ -9,7 +9,6 @@ const AboutPage = () => {
         <div className="about-content bg-white p-4 rounded shadow">
           <h1 className="title">About Our Team</h1>
           <div className="team-intro">
-            <img src={teamPhoto} alt="Our Team" className="team-photo" />
             <p className="intro">
               We are three ambitious Software Engineer students from Astana IT University 
               embarking on our first commercial-grade project. This initiative is part of 

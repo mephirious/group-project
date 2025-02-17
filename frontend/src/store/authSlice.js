@@ -85,6 +85,18 @@ export const verifyAuth = createAsyncThunk('auth/verifyAuth', async (_, { dispat
     }
 });
 
+export const fetchUserData = createAsyncThunk(
+    'auth/fetchUserData',
+    async (_, { rejectWithValue }) => {
+      const response = await fetch(`${BASE_URL}auth/api/v1/me`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      if (!response.ok) return rejectWithValue(await response.json());
+      return response.json();
+    }
+  );  
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -161,7 +173,20 @@ const authSlice = createSlice({
                 state.authStatus = 'failed';
                 state.authError = action.payload || action.error.message;
                 state.user = null;
-            });
+            })
+            .addCase(fetchUserData.pending, (state) => {
+              state.authStatus = 'loading';
+              state.authError = null;
+            })
+            .addCase(fetchUserData.fulfilled, (state, action) => {
+              state.authStatus = 'succeeded';
+              state.user = action.payload;
+            })
+            .addCase(fetchUserData.rejected, (state, action) => {
+              state.authStatus = 'failed';
+              state.authError = action.payload || action.error.message;
+              state.user = null;
+            });;
     },
 });
 

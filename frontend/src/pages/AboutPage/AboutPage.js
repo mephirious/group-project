@@ -11,7 +11,7 @@ const AboutPage = () => {
           <div className="team-intro">
             <img src={teamPhoto} alt="Our Team" className="team-photo" />
             <p className="intro">
-              We are three ambitious Computer Science students from Astana IT University 
+              We are three ambitious Software Engineer students from Astana IT University 
               embarking on our first commercial-grade project. This initiative is part of 
               our Advanced Programming 1 course, where we're cutting our teeth on 
               microservice architecture and Docker deployment.

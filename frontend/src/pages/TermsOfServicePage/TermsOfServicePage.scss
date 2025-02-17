@@ -1,0 +1,38 @@
+// Shared academic styling
+.team-photo {
+    width: 100%;
+    max-width: 600px;
+    margin: 1rem auto;
+    border-radius: 8px;
+  }
+  
+  .tech-list, .faq-list {
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+    
+    li {
+      margin: 0.5rem 0;
+      padding-left: 0.5rem;
+    }
+  }
+  
+  .contact-card, .member-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    border: 1px solid #dee2e6;
+    
+    h3 {
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+  }
+  
+  .updated {
+    font-size: 0.9rem;
+    color: #6c757d;
+    border-top: 1px solid #dee2e6;
+    padding-top: 1rem;
+    margin-top: 2rem;
+  }

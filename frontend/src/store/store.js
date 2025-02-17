@@ -7,7 +7,7 @@ import productReducer from "./productSlice";
 import cartReducer from "./cartSlice";
 import searchReducer from "./searchSlice";
 import authReducer from "./authSlice";
-import postReducer from "./newsSlice";
+import postReducer from "./blogSlice";
 import comparisonReducer from './comparisonSlice';
 
 const store = configureStore({

@@ -17,12 +17,12 @@ const LaptopComparison = () => {
     return (
       <div className='container my-5'>
         <div className='empty-cart flex justify-center align-center flex-column font-manrope'>
-          <img src = {shopping_cart} alt = "" />
+          <img src={shopping_cart} alt="" />
           <span className='fw-6 fs-15 text-gray'>Your laptop comparison list is empty.</span>
-          <Link to = "/" className='shopping-btn bg-orange text-white fw-5'>Browse Laptops</Link>
+          <Link to="/" className='shopping-btn bg-orange text-white fw-5'>Browse Laptops</Link>
         </div>
       </div>
-    )
+    );
   }
 
   const allSpecKeysSet = new Set();
@@ -37,14 +37,34 @@ const LaptopComparison = () => {
     autoplay: false,
     arrows: true,
     dots: false,
-    infinite: true,
+    infinite: laptops.length > 4,
     speed: 500,
     slidesToShow: 4,
     swipeToSlide: false,
     responsive: [
-      { breakpoint: 1200, settings: { slidesToShow: 3 } },
-      { breakpoint: 992, settings: { slidesToShow: 2 } },
-      { breakpoint: 768, settings: { slidesToShow: 1, vertical: true, verticalSwiping: true } },
+      { 
+        breakpoint: 1200, 
+        settings: { 
+          slidesToShow: 3, 
+          infinite: laptops.length > 3 
+        } 
+      },
+      { 
+        breakpoint: 992, 
+        settings: { 
+          slidesToShow: 2, 
+          infinite: laptops.length > 2 
+        } 
+      },
+      { 
+        breakpoint: 768, 
+        settings: { 
+          slidesToShow: 1, 
+          vertical: true, 
+          verticalSwiping: true, 
+          infinite: laptops.length > 1 
+        } 
+      },
     ],
   };
 

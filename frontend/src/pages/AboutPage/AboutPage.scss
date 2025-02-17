@@ -1,0 +1,42 @@
+.about-page {
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  .about-content {
+    padding: 30px;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    .title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .intro {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      color: #555;
+    }
+    h2 {
+      font-size: 24px;
+      margin: 20px 0 10px;
+      color: #333;
+    }
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #555;
+      margin-bottom: 15px;
+    }
+    .updated {
+      margin-top: 30px;
+      font-style: italic;
+      color: #777;
+    }
+  }
+}

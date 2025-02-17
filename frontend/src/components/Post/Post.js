@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import "./Post.scss";
+import { formatDate } from '../../utils/helpers';
 
 const Post = ({ post }) => {
-  let formattedDate = new Date(post?.created_at);
-  let date = `${formattedDate.getDate().toString().padStart(2, '0')}.${(formattedDate.getMonth() + 1).toString().padStart(2, '0')}.${formattedDate.getFullYear()}`;
+  let date = formatDate(post?.created_at)
   return (
     
     <Link to = {`/blog/${post?.id}`} key = {post?.id}>

@@ -20,12 +20,11 @@ const Header = () => {
         <div className='header-cnt'>
           <div className='header-cnt-top fs-13 py-2 flex align-center justify-between'>
             <div className='header-cnt-top-l'>
-              {/* ...other header content... */}
             </div>
             <div className='header-cnt-top-r'>
               <ul className='top-links flex align-center'>
                 <li>
-                  <Link to="/" className='top-link-itm'>
+                  <Link to="/support" className='top-link-itm'>
                     <span className='top-link-itm-ico mx-2'>
                       <i className='fa-solid fa-circle-question'></i>
                     </span>

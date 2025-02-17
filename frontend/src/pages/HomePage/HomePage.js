@@ -6,7 +6,7 @@ import { getAllCategories } from '../../store/categorySlice';
 import ProductList from "../../components/ProductList/ProductList";
 import { fetchAsyncProducts, getAllProducts, getAllProductsStatus } from '../../store/productSlice';
 import NewsSlider from '../../components/Slider/NewsSlider';
-import { fetchAsyncPosts, getAllPosts, getAllPostsStatus } from '../../store/newsSlice';
+import { fetchAsyncPosts, getAllPosts, getAllPostsStatus } from '../../store/blogSlice';
 import Loader from "../../components/Loader/Loader";
 import { STATUS } from '../../utils/status';
 import { fetchAsyncBrands, getAllBrands } from '../../store/brandsSlice';

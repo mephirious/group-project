@@ -152,7 +152,7 @@ func (s *AuthService) Login(ctx context.Context, input domain.LoginInput) (*doma
 	refreshToken, err := utils.SignToken(map[string]interface{}{
 		"sessionId": session.ID,
 	}, &utils.SignOptions{
-		ExpiresIn: utils.AccessTokenExpiry,
+		ExpiresIn: utils.RefreshTokenExpiry,
 		Secret:    utils.JWTRefreshSecret,
 		Audience:  existingUser.Role,
 	})

@@ -7,6 +7,7 @@ import { createProduct, updateProduct, deleteProduct } from '../../../../store/a
 import { BASE_URL } from '../../../../utils/apiURL';
 import './ProductForm.scss';
 import ImageField from '../../Common/FormFields/ImageField';
+import { refreshTokenAsync } from '../../../../store/authSlice';
 
 const defaultSpecifications = [
   { key: 'cpu', value: '' },
@@ -89,9 +90,17 @@ const ProductForm = ({ selectedData, onActionSuccess }) => {
 
   const handleSpecificationChange = (index, field, value) => {
     const newSpecs = [...specifications];
-    newSpecs[index][field] = value;
+    
+    if (field === 'value' && newSpecs[index].key === 'cpu_cores') {
+      const numericValue = !isNaN(value) ? Number(value) : value;
+      newSpecs[index][field] = numericValue;
+    } else {
+      newSpecs[index][field] = value;
+    }
+    
     setSpecifications(newSpecs);
   };
+  
 
   const handleAddSpecification = () => {
     setSpecifications([...specifications, { key: '', value: '' }]);
@@ -101,38 +110,63 @@ const ProductForm = ({ selectedData, onActionSuccess }) => {
     setSpecifications(specifications.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (operation !== 'delete' && images.length === 0) {
-      alert('Please add at least one image.');
-      return;
+        alert('Please add at least one image.');
+        return;
     }
     const specsObj = {};
     specifications.forEach(spec => {
-      if (spec.key.trim()) specsObj[spec.key.trim()] = spec.value;
+        if (spec.key.trim()) {
+            specsObj[spec.key.trim()] = typeof spec.value === 'number' ? spec.value : spec.value;
+        }
     });
     const productData = {
-      model_name: modelName,
-      price: Number(price),
-      category_id: selectedCategory.id,
-      brand_id: selectedBrand.id,
-      type_id: selectedType.id,
-      specifications: specsObj,
-      content,
-      images,
+        model_name: modelName,
+        price: Number(price),
+        category_id: selectedCategory.id,
+        brand_id: selectedBrand.id,
+        type_id: selectedType.id,
+        specifications: specsObj,
+        content,
+        images,
     };
     setShowConfirm(true);
-    setPendingAction(() => () => {
-      if (operation === 'create') {
-        dispatch(createProduct(productData));
-      } else if (operation === 'update') {
-        dispatch(updateProduct({ id: selectedData.id, data: productData }));
-      } else if (operation === 'delete') {
-        dispatch(deleteProduct(selectedData.id));
-      }
-      resetFields();
+    setPendingAction(() => async () => {
+        try {
+            if (operation === 'create') {
+                await dispatch(createProduct(productData));
+            } else if (operation === 'update') {
+                await dispatch(updateProduct({ id: selectedData.id, data: productData }));
+            } else if (operation === 'delete') {
+                await dispatch(deleteProduct(selectedData.id));
+            }
+            resetFields();
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                try {
+                    await dispatch(refreshTokenAsync()).unwrap();
+
+                    if (operation === 'create') {
+                        await dispatch(createProduct(productData));
+                    } else if (operation === 'update') {
+                        await dispatch(updateProduct({ id: selectedData.id, data: productData }));
+                    } else if (operation === 'delete') {
+                        await dispatch(deleteProduct(selectedData.id));
+                    }
+                    resetFields();
+                } catch (refreshError) {
+                    alert('Failed to refresh token. Please log in again.');
+                }
+            } else {
+                alert('Something went wrong. Please try again.');
+            }
+        }
     });
-  };
+};
+
+  
 
   return (
     <div className="product-form">
@@ -206,7 +240,7 @@ const ProductForm = ({ selectedData, onActionSuccess }) => {
                     required
                   />
                   <input
-                    type="text"
+                    type={spec.key === "cpu_cores" ? "number" : "text"}
                     placeholder="Value"
                     value={spec.value}
                     onChange={e => handleSpecificationChange(index, 'value', e.target.value)}

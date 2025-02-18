@@ -1,0 +1,21 @@
+.blog-post-list-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .created-at {
+      font-size: 14px;
+      color: #666;
+    }
+    &:hover {
+      background: #f5f5f5;
+    }
+  }
+  

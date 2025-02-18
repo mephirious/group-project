@@ -1,1 +1,6 @@
-# group-project
+# RESTInRehab
+
+# Frontend
+```
+make -C frontend/ build-run
+```

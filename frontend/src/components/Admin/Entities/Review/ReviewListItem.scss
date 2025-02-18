@@ -1,0 +1,28 @@
+.review-list-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    &:hover {
+      background: #f5f5f5;
+    }
+    .content {
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    .details {
+      font-size: 12px;
+      color: #333;
+      margin-bottom: 5px;
+      span {
+        margin-right: 10px;
+      }
+    }
+    .meta {
+      font-size: 12px;
+      color: #666;
+      span {
+        display: block;
+      }
+    }
+  }
+  

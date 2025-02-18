@@ -1,0 +1,22 @@
+.laptop-image img {
+width: 100%;
+height: auto;
+}
+
+.laptop-details {
+padding: 16px;
+}
+
+.laptop-actions {
+display: flex;
+justify-content: space-between;
+padding: 16px;
+}
+
+.view-details-btn {
+background-color: #007bff;
+color: white;
+padding: 8px 16px;
+text-decoration: none;
+border-radius: 4px;
+}

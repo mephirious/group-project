@@ -50,6 +50,7 @@ func (s *AuthService) Register(ctx context.Context, input domain.RegisterInput) 
 	newCustomer, err := s.DB.CreateCustomer(ctx, repository.CreateCustomerInput{
 		Email:    input.Email,
 		Password: hashedPassword,
+		Role:     "user",
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %v", err)
@@ -107,6 +108,7 @@ func (s *AuthService) Register(ctx context.Context, input domain.RegisterInput) 
 			ID:       newCustomer.ID,
 			Email:    newCustomer.Email,
 			Verified: newCustomer.Verified,
+			Role:     newCustomer.Role,
 			// FirstName: newCustomer.FirstName,
 			// LastName:  newCustomer.LastName,
 			// Phone:     newCustomer.Phone,
@@ -150,9 +152,9 @@ func (s *AuthService) Login(ctx context.Context, input domain.LoginInput) (*doma
 	refreshToken, err := utils.SignToken(map[string]interface{}{
 		"sessionId": session.ID,
 	}, &utils.SignOptions{
-		ExpiresIn: utils.AccessTokenExpiry,
+		ExpiresIn: utils.RefreshTokenExpiry,
 		Secret:    utils.JWTRefreshSecret,
-		Audience:  utils.DefaultAudience,
+		Audience:  existingUser.Role,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create refresh token: %v", err)
@@ -164,7 +166,7 @@ func (s *AuthService) Login(ctx context.Context, input domain.LoginInput) (*doma
 	}, &utils.SignOptions{
 		ExpiresIn: utils.AccessTokenExpiry,
 		Secret:    utils.JWTSecret,
-		Audience:  utils.DefaultAudience,
+		Audience:  existingUser.Role,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create access token: %v", err)
@@ -226,7 +228,7 @@ func (s *AuthService) RefreshUserAccessToken(ctx context.Context, input domain.R
 		}, &utils.SignOptions{
 			ExpiresIn: utils.RefreshTokenExpiry,
 			Secret:    utils.JWTRefreshSecret,
-			Audience:  utils.DefaultAudience,
+			Audience:  claims.Audience[0],
 		})
 		if err != nil {
 			return nil, fmt.Errorf("failed to create refresh token: %v", err)
@@ -240,7 +242,7 @@ func (s *AuthService) RefreshUserAccessToken(ctx context.Context, input domain.R
 	}, &utils.SignOptions{
 		ExpiresIn: utils.AccessTokenExpiry,
 		Secret:    utils.JWTSecret,
-		Audience:  utils.DefaultAudience,
+		Audience:  claims.Audience[0],
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create access token: %v", err)
@@ -250,5 +252,17 @@ func (s *AuthService) RefreshUserAccessToken(ctx context.Context, input domain.R
 		Message:      "Access token refreshed",
 		AccessToken:  accessToken,
 		RefreshToken: newRefreshToken,
+	}, nil
+}
+
+func (s *AuthService) ValidateAccessToken(ctx context.Context, input domain.LogoutInput) (*domain.ValidateResponse, error) {
+	// Verify the token
+	claims, err := utils.VerifyToken[utils.AccessTokenPayload](input.AccessToken, utils.JWTSecret)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.ValidateResponse{
+		UserID: claims.UserID,
+		Role:   claims.Audience[0],
 	}, nil
 }

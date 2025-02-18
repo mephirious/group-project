@@ -1,0 +1,21 @@
+.operation-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    button {
+      flex: 1;
+      padding: 10px;
+      margin-right: 5px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      cursor: pointer;
+      &:last-child {
+        margin-right: 0;
+      }
+      &.active {
+        background: #007bff;
+        color: #fff;
+        border-color: #007bff;
+      }
+    }
+  }
+  

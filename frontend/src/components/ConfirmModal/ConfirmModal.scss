@@ -1,0 +1,44 @@
+/* src/components/ConfirmModal/ConfirmModal.scss */
+.confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.confirm-modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 4px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.confirm-modal-buttons {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-around;
+}
+
+.confirm-modal-buttons button {
+  padding: 0.5rem 1rem;
+}
+
+.confirm-ok {
+  background: #2ecc71;
+  color: #fff;
+  border: none;
+}
+
+.confirm-cancel {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+}

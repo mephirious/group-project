@@ -55,6 +55,14 @@ func (t *typeUseCase) GetTypeByName(ctx context.Context, name string) (*domain.T
 }
 
 func (t *typeUseCase) CreateType(ctx context.Context, typeEntity *domain.Type) error {
+	existingType, err := t.typeRepository.GetTypeByName(ctx, typeEntity.TypeName)
+	if err != nil {
+		return err
+	}
+	if existingType != nil {
+		return errors.New("type already exists")
+	}
+
 	return t.typeRepository.CreateType(ctx, typeEntity)
 }
 

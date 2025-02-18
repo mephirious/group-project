@@ -18,6 +18,9 @@ const AdminSidebar = ({ onSelectEntity, selectedEntity }) => {
         <li className={selectedEntity === 'products' ? 'active' : ''} onClick={() => onSelectEntity('products')}>
           Products
         </li>
+        <li className={selectedEntity === 'blog-posts' ? 'active' : ''} onClick={() => onSelectEntity('blog-posts')}>
+          Blogs
+        </li>
       </ul>
     </aside>
   );

@@ -43,14 +43,12 @@ const productSlice = createSlice({
     }
 });
 
-// for getting the products list with limited numbers
 export const fetchAsyncProducts = createAsyncThunk('products/fetch', async(limit) => {
     const response = await fetch(`${BASE_URL}products/products?limit=${limit}`);
     const data = await response.json();
     return data;
 });
 
-// getting the single product data also
 export const fetchAsyncProductSingle = createAsyncThunk('product-single/fetch', async(id) => {
     const response = await fetch(`${BASE_URL}products/products/${id}`);
     const data = await response.json();

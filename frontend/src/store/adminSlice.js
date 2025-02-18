@@ -130,6 +130,40 @@ export const deleteProduct = createAsyncThunk('admin/deleteProduct', async(id, {
   return { id };
 });
 
+
+// Blog-Posts Slice
+export const createBlogPost = createAsyncThunk('admin/createBlogPost', async(blog, { rejectWithValue }) => {
+  const response = await fetch(`${BASE_URL}blogs/blog-posts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(blog)
+  });
+  if (!response.ok) return rejectWithValue(await response.json());
+  return response.json();
+});
+
+export const updateBlogPost = createAsyncThunk('admin/updateBlogPost', async({ id, data }, { rejectWithValue }) => {
+  const response = await fetch(`${BASE_URL}blogs/blog-posts/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(data)
+  });
+  if (!response.ok) return rejectWithValue(await response.json());
+  return response.json();
+});
+
+export const deleteBlogPost = createAsyncThunk('admin/deleteBlogPost', async(id, { rejectWithValue }) => {
+  const response = await fetch(`${BASE_URL}blogs/blog-posts/${id}`, {
+    method: 'DELETE',
+    credentials: 'include'
+  });
+  if (!response.ok) return rejectWithValue(await response.json());
+  return { id };
+});
+
+
 const adminSlice = createSlice({
   name: 'admin',
   initialState: {
@@ -167,7 +201,27 @@ const adminSlice = createSlice({
       .addCase(updateType.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; })
       .addCase(deleteType.pending, (state) => { state.status = STATUS.LOADING; })
       .addCase(deleteType.fulfilled, (state) => { state.status = STATUS.SUCCEEDED; })
-      .addCase(deleteType.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; });
+      .addCase(deleteType.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; })
+      
+      .addCase(createProduct.pending, (state) => { state.status = STATUS.LOADING; })
+      .addCase(createProduct.fulfilled, (state) => { state.status = STATUS.SUCCEEDED; })
+      .addCase(createProduct.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; })
+      .addCase(updateProduct.pending, (state) => { state.status = STATUS.LOADING; })
+      .addCase(updateProduct.fulfilled, (state) => { state.status = STATUS.SUCCEEDED; })
+      .addCase(updateProduct.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; })
+      .addCase(deleteProduct.pending, (state) => { state.status = STATUS.LOADING; })
+      .addCase(deleteProduct.fulfilled, (state) => { state.status = STATUS.SUCCEEDED; })
+      .addCase(deleteProduct.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; })
+      
+      .addCase(createBlogPost.pending, (state) => { state.status = STATUS.LOADING; })
+      .addCase(createBlogPost.fulfilled, (state) => { state.status = STATUS.SUCCEEDED; })
+      .addCase(createBlogPost.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; })
+      .addCase(updateBlogPost.pending, (state) => { state.status = STATUS.LOADING; })
+      .addCase(updateBlogPost.fulfilled, (state) => { state.status = STATUS.SUCCEEDED; })
+      .addCase(updateBlogPost.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; })
+      .addCase(deleteBlogPost.pending, (state) => { state.status = STATUS.LOADING; })
+      .addCase(deleteBlogPost.fulfilled, (state) => { state.status = STATUS.SUCCEEDED; })
+      .addCase(deleteBlogPost.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; })
   }
 });
 

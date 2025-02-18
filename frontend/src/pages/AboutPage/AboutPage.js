@@ -1,6 +1,5 @@
 import React from 'react';
 import "./AboutPage.scss";
-import teamPhoto from '../../assets/images/team-photo.jpg'; // Add your team photo
 
 const AboutPage = () => {
   return (

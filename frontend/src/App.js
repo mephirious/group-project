@@ -5,7 +5,7 @@ import Header from "./components/Header/Header";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Footer from "./components/Footer/Footer";
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
-import AdminEditPage from './pages/AdminEditPage/AdminEditPage';
+import AdminEditPage from './pages/Admin/AdminEditPage';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { verifyAuth } from './store/authSlice';

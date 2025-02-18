@@ -2,8 +2,5 @@
 
 # Frontend
 ```
-cd frontend
-
-npm install
-make build-run
+make -C frontend/ build-run
 ```

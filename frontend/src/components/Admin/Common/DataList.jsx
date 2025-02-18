@@ -40,9 +40,7 @@ const DataList = ({ entity, onSelectData, refresh }) => {
       });
       if (searchTerm) params.append('search', searchTerm);
       url = `${url}?${params.toString()}`;
-      console.log(url, status, endpoint)
     }
-    console.log("DATA FETCHED:", url, data.slice(0, 5))
     fetch(url, { credentials: 'include' })
       .then((res) => res.json())
       .then((json) => {

@@ -15,7 +15,7 @@ type ReviewUseCase interface {
 	GetReviewByID(ctx context.Context, id primitive.ObjectID) (*domain.Review, error)
 	GetReviewsByCustomerID(ctx context.Context, customerID primitive.ObjectID, limit int, verified *bool) ([]domain.Review, error)
 	GetReviewsByProductID(ctx context.Context, productID primitive.ObjectID, limit int, verified *bool) ([]domain.Review, int64, float64, error)
-	UpdateReview(ctx context.Context, id primitive.ObjectID, review *domain.Review) error
+	UpdateReview(ctx context.Context, review *domain.Review) error
 	DeleteReview(ctx context.Context, id primitive.ObjectID) error
 	CreateReview(ctx context.Context, review *domain.Review) error
 }
@@ -84,16 +84,16 @@ func (u *reviewUseCase) GetReviewsByProductID(ctx context.Context, productID pri
 	return reviews, totalReviews, averageRating, nil
 }
 
-func (u *reviewUseCase) UpdateReview(ctx context.Context, id primitive.ObjectID, review *domain.Review) error {
-	existingReview, err := u.reviewRepository.GetReviewByID(ctx, id)
+func (u *reviewUseCase) UpdateReview(ctx context.Context, review *domain.Review) error {
+	existingReview, err := u.reviewRepository.GetReviewByID(ctx, (*review).ID)
 	if err != nil {
 		return err
 	}
-	if existingReview != nil {
-		return errors.New("product not found")
+	if existingReview == nil {
+		return errors.New("review not found")
 	}
 
-	return u.reviewRepository.UpdateReview(ctx, id, review)
+	return u.reviewRepository.UpdateReview(ctx, review)
 }
 
 func (u *reviewUseCase) DeleteReview(ctx context.Context, id primitive.ObjectID) error {

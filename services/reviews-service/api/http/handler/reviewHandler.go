@@ -253,7 +253,7 @@ func (h *ReviewHandler) UpdateReview(g *gin.Context) {
 		UpdatedAt:  time.Now(),
 	}
 
-	if err := h.useCase.UpdateReview(g.Request.Context(), reviewID, &review); err != nil {
+	if err := h.useCase.UpdateReview(g.Request.Context(), &review); err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		slog.Error(fmt.Sprintf("Method %s failed: %s", g.Request.Method, err))
 		return

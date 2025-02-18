@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/mephirious/group-project/services/products-service/domain"
@@ -16,7 +17,7 @@ type ReviewRepository interface {
 	GetReviewByID(ctx context.Context, id primitive.ObjectID) (*domain.Review, error)
 	GetReviewsByCustomerID(ctx context.Context, customerID primitive.ObjectID, limit int, verified *bool) ([]domain.Review, error)
 	GetReviewsByProductID(ctx context.Context, productID primitive.ObjectID, limit int, verified *bool) ([]domain.Review, error)
-	UpdateReview(ctx context.Context, id primitive.ObjectID, review *domain.Review) error
+	UpdateReview(ctx context.Context, review *domain.Review) error
 	DeleteReview(ctx context.Context, id primitive.ObjectID) error
 	CreateReview(ctx context.Context, review *domain.Review) error
 	GetReviewsByCustomerAndProductIDs(ctx context.Context, productID primitive.ObjectID, customerID primitive.ObjectID) ([]domain.Review, error)
@@ -80,7 +81,7 @@ func (r *reviewRepository) GetAllReviews(ctx context.Context, limit, skip int, s
 
 func (r *reviewRepository) GetReviewByID(ctx context.Context, id primitive.ObjectID) (*domain.Review, error) {
 	var review domain.Review
-
+	fmt.Println(id)
 	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&review)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -195,10 +196,10 @@ func (r *reviewRepository) GetAllReviewsCount(ctx context.Context, verified *boo
 	return r.collection.CountDocuments(ctx, filter)
 }
 
-func (r *reviewRepository) UpdateReview(ctx context.Context, id primitive.ObjectID, review *domain.Review) error {
+func (r *reviewRepository) UpdateReview(ctx context.Context, review *domain.Review) error {
 	review.UpdatedAt = time.Now()
 
-	_, err := r.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": review})
+	_, err := r.collection.UpdateOne(ctx, bson.M{"_id": review.ID}, bson.M{"$set": review})
 	if err != nil {
 		return err
 	}

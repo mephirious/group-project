@@ -1,3 +1,4 @@
+// Reviews.scss
 .reviews {
   background: #fff;
   padding: 20px;
@@ -20,6 +21,72 @@
     }
     .rating-value {
       color: #e63946;
+    }
+  }
+
+  .btns {
+    margin-bottom: 1rem;
+    
+    .btn {
+      height: 46px;
+      font-size: 15px;
+      border: 1px solid #FF6B35;
+      padding: 0 1.8rem;
+      transition: all 0.3s ease;
+      text-transform: capitalize;
+
+      &:first-child {
+        background-color: #FFEEE8;
+        color: #FF6B35;
+      }
+
+      &:last-child {
+        background-color: #FF6B35;
+        color: white;
+      }
+
+      &:hover {
+        opacity: 0.9;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .review-form {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 4px;
+
+    h4 {
+      margin-bottom: 0.75rem;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 0.75rem;
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
     }
   }
 

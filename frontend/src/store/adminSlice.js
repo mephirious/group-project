@@ -165,7 +165,7 @@ export const deleteBlogPost = createAsyncThunk('admin/deleteBlogPost', async(id,
 
 // Reviews Slice
 export const createReview = createAsyncThunk('admin/createReview', async(review, { rejectWithValue }) => {
-  const response = await fetch(`${BASE_URL}review/reviews`, {
+  const response = await fetch(`${BASE_URL}reviews/reviews`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -176,7 +176,7 @@ export const createReview = createAsyncThunk('admin/createReview', async(review,
 });
 
 export const updateReview = createAsyncThunk('admin/updateReview', async({ id, data }, { rejectWithValue }) => {
-  const response = await fetch(`${BASE_URL}review/reviews/${id}`, {
+  const response = await fetch(`${BASE_URL}reviews/reviews/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -187,7 +187,7 @@ export const updateReview = createAsyncThunk('admin/updateReview', async({ id, d
 });
 
 export const deleteReview = createAsyncThunk('admin/deleteReview', async(id, { rejectWithValue }) => {
-  const response = await fetch(`${BASE_URL}review/reviews/${id}`, {
+  const response = await fetch(`${BASE_URL}reviews/reviews/${id}`, {
     method: 'DELETE',
     credentials: 'include'
   });

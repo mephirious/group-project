@@ -36,6 +36,10 @@ func main() {
 	if authServiceURL == "" {
 		log.Fatal("REVIEWS_SERVICE_URL not set in .env file")
 	}
+	paymentServiceURL := os.Getenv("PAYMENT_SERVICE_URL")
+	if paymentServiceURL == "" {
+		log.Fatal("PAYMENT_SERVICE_URL not set in .env file")
+	}
 
 	go cfg.HealthCheckLoop()
 
@@ -43,6 +47,7 @@ func main() {
 	http.Handle("/products/", middleware.CORS(middleware.Logging(proxy.ReverseProxyHandler(productsServiceURL))))
 	http.Handle("/blogs/", middleware.CORS(middleware.Logging(proxy.ReverseProxyHandler(blogsServiceURL))))
 	http.Handle("/reviews/", middleware.CORS(middleware.Logging(proxy.ReverseProxyHandler(reviewsServiceURL))))
+	http.Handle("/payment/", middleware.CORS(middleware.Logging(proxy.ReverseProxyHandler(paymentServiceURL))))
 
 	brandPermissions := map[string]string{
 		"GET":    "",

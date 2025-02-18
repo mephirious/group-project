@@ -4,23 +4,42 @@ import { useSelector, useDispatch } from 'react-redux';
 import { shopping_cart } from '../../utils/images';
 import { Link } from 'react-router-dom';
 import { formatPrice } from '../../utils/helpers';
-import { getAllCarts, removeFromCart, toggleCartQty, clearCart, getCartTotal } from '../../store/cartSlice';
+import { getAllCarts, removeFromCart, toggleCartQty, clearCart } from '../../store/cartSlice';
+import { createCheckoutSession } from '../../store/paymentSlice';
 
 const CartPage = () => {
   const dispatch = useDispatch();
   const carts = useSelector(getAllCarts);
-  const { itemsCount, totalAmount} = useSelector((state) => state.cart);
+  const { itemsCount, totalAmount } = useSelector((state) => state.cart);
 
-  if(carts.length === 0){
+  const handleCheckout = () => {
+    const paymentItems = carts.map(cart => ({
+      id: cart.id,
+      model_name: cart.model_name,
+      price: Math.ceil(cart.discountedPrice)*100,
+      quantity: cart.quantity,
+      currency: "KZT"
+    }));
+    dispatch(createCheckoutSession(paymentItems))
+      .unwrap()
+      .then((res) => {
+        window.location.href = res.url;
+      })
+      .catch((err) => {
+        console.error("Checkout session creation failed:", err);
+      });
+  };
+
+  if (carts.length === 0) {
     return (
       <div className='container my-5'>
         <div className='empty-cart flex justify-center align-center flex-column font-manrope'>
-          <img src = {shopping_cart} alt = "" />
+          <img src={shopping_cart} alt="" />
           <span className='fw-6 fs-15 text-gray'>Your shopping cart is empty.</span>
-          <Link to = "/" className='shopping-btn bg-orange text-white fw-5'>Go shopping Now</Link>
+          <Link to="/" className='shopping-btn bg-orange text-white fw-5'>Go shopping Now</Link>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -54,50 +73,42 @@ const CartPage = () => {
           </div>
 
           <div className='cart-cbody bg-white'>
-            {
-              carts.map((cart, idx) => {
-                return (
-                  <div className='cart-ctr py-4' key = {cart?.id}>
-                    <div className='cart-ctd'>
-                      <span className='cart-ctxt'>{idx + 1}</span>
+            {carts.map((cart, idx) => (
+              <div className='cart-ctr py-4' key={cart?.id}>
+                <div className='cart-ctd'>
+                  <span className='cart-ctxt'>{idx + 1}</span>
+                </div>
+                <div className='cart-ctd'>
+                  <img src={cart?.images[0] || ''} alt={cart?.model_name} className='cart-ctxt' />
+                </div>
+                <Link to={`/product/${cart.id}`} className="cart-ctd">
+                  <span className='cart-ctxt'>{cart?.model_name}</span>
+                  View Details
+                </Link>
+                <div className='cart-ctd'>
+                  <span className='cart-ctxt'>{formatPrice(cart?.discountedPrice)}</span>
+                </div>
+                <div className='cart-ctd'>
+                  <div className='qty-change flex align-center'>
+                    <button type="button" className='qty-decrease flex align-center justify-center' onClick={() => dispatch(toggleCartQty({ id: cart?.id, type: "DEC" }))}>
+                      <i className='fas fa-minus'></i>
+                    </button>
+                    <div className='qty-value flex align-center justify-center'>
+                      {cart?.quantity}
                     </div>
-                    <div className='cart-ctd'>
-                      <img src={cart?.images[0] || ''} alt={cart?.model_name} className='cart-ctxt' />
-                    </div>
-                    <Link to={`/product/${cart.id}`} className="cart-ctd">
-                    <span className='cart-ctxt'>{cart?.model_name}</span>
-                      View Details
-                    </Link>
-                    <div className='cart-ctd'>
-                      <span className='cart-ctxt'>{formatPrice(cart?.discountedPrice)}</span>
-                    </div>
-                    <div className='cart-ctd'>
-                      <div className='qty-change flex align-center'>
-                        <button type = "button" className='qty-decrease flex align-center justify-center' onClick={() => dispatch(toggleCartQty({id: cart?.id, type: "DEC"}))}>
-                          <i className='fas fa-minus'></i>
-                        </button>
-
-                        <div className='qty-value flex align-center justify-center'>
-                          {cart?.quantity}
-                        </div>
-
-                        <button type = "button" className='qty-increase flex align-center justify-center' onClick={() => dispatch(toggleCartQty({id: cart?.id, type: "INC"}))}>
-                          <i className='fas fa-plus'></i>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className='cart-ctd'>
-                      <span className='cart-ctxt text-orange fw-5'>{formatPrice(cart?.totalPrice)}</span>
-                    </div>
-
-                    <div className='cart-ctd'>
-                      <button type = "button" className='delete-btn text-dark' onClick={() => dispatch(removeFromCart(cart?.id))}>Delete</button>
-                    </div>
+                    <button type="button" className='qty-increase flex align-center justify-center' onClick={() => dispatch(toggleCartQty({ id: cart?.id, type: "INC" }))}>
+                      <i className='fas fa-plus'></i>
+                    </button>
                   </div>
-                )
-              })
-            }
+                </div>
+                <div className='cart-ctd'>
+                  <span className='cart-ctxt text-orange fw-5'>{formatPrice(cart?.totalPrice)}</span>
+                </div>
+                <div className='cart-ctd'>
+                  <button type="button" className='delete-btn text-dark' onClick={() => dispatch(removeFromCart(cart?.id))}>Delete</button>
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className='cart-cfoot flex align-start justify-between py-3 bg-white'>
@@ -107,20 +118,18 @@ const CartPage = () => {
                 <span className='mx-1'>Clear Cart</span>
               </button>
             </div>
-
             <div className='cart-cfoot-r flex flex-column justify-end'>
               <div className='total-txt flex align-center justify-end'>
                 <div className='font-manrope fw-5'>Total ({itemsCount}) items: </div>
                 <span className='text-orange fs-22 mx-2 fw-6'>{formatPrice(totalAmount)}</span>
               </div>
-
-              <button type = "button" className='checkout-btn text-white bg-orange fs-16'>Check Out</button>
+              <button type="button" className='checkout-btn text-white bg-orange fs-16' onClick={handleCheckout}>Check Out</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CartPage
+export default CartPage;

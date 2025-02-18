@@ -3,7 +3,7 @@ package domain
 import "time"
 
 type Product struct {
-	ID       string `json:"_id" bson:"_id"`
+	ID       string `json:"id" bson:"_id"`
 	Name     string `json:"model_name" bson:"model_name"`
 	Price    int64  `json:"price" bson:"price"`
 	Quantity int64  `json:"quantity" bson:"quantity"`

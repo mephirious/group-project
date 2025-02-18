@@ -10,6 +10,7 @@ import authReducer from "./authSlice";
 import postReducer from "./blogSlice";
 import comparisonReducer from './comparisonSlice';
 import reviewReducer from './reviewSlice'
+import paymentReducer from './paymentSlice'
 
 const store = configureStore({
     reducer: {
@@ -24,6 +25,7 @@ const store = configureStore({
         post: postReducer,
         comparison: comparisonReducer,
         review: reviewReducer,
+        payment: paymentReducer,
     }
 });
 

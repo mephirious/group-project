@@ -69,8 +69,8 @@ func AuthMiddleware(next http.Handler, requiredRoles map[string]string) http.Han
 			return
 		}
 
-		// Check if the user's role meets the required role
-		if requiredRole != "" && claims.Role != requiredRole {
+		// Allow access if user has required or higher-level role
+		if !hasPermission(claims.Role, requiredRole) {
 			http.Error(w, "Forbidden: insufficient permissions", http.StatusForbidden)
 			return
 		}
@@ -79,4 +79,9 @@ func AuthMiddleware(next http.Handler, requiredRoles map[string]string) http.Han
 		ctx := context.WithValue(r.Context(), "user", claims)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func hasPermission(userRole, requiredRole string) bool {
+	roleHierarchy := map[string]int{"": 0, "user": 1, "admin": 2}
+	return roleHierarchy[userRole] >= roleHierarchy[requiredRole]
 }

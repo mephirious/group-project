@@ -61,7 +61,7 @@ func main() {
 
 	reviewPermissions := map[string]string{
 		"GET":    "",
-		"POST":   "",
+		"POST":   "user",
 		"PUT":    "admin",
 		"DELETE": "admin",
 	}

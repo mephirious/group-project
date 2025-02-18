@@ -9,6 +9,7 @@ import searchReducer from "./searchSlice";
 import authReducer from "./authSlice";
 import postReducer from "./blogSlice";
 import comparisonReducer from './comparisonSlice';
+import reviewReducer from './reviewSlice'
 
 const store = configureStore({
     reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
         auth: authReducer,
         post: postReducer,
         comparison: comparisonReducer,
+        review: reviewReducer,
     }
 });
 

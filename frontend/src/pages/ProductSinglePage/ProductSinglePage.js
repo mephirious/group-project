@@ -3,12 +3,15 @@ import "./ProductSinglePage.scss";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchAsyncProductSingle, getProductSingle, getSingleProductStatus } from '../../store/productSlice';
+import { fetchAsyncReviewsOfProduct, getAllProductsByReview, getReviewProductsStatus, createAsyncReview } from '../../store/reviewSlice';
 import { STATUS } from '../../utils/status';
 import Loader from "../../components/Loader/Loader";
 import { formatPrice } from "../../utils/helpers";
 import { addToCart, getCartMessageStatus, setCartMessageOff, setCartMessageOn } from '../../store/cartSlice';
 import { addToComparison, getComparisonMessageStatus, setComparisonMessageOff, setComparisonMessageOn } from '../../store/comparisonSlice';
 import PopupMessage from "../../components/PopupMessage/PopupMessage";
+import Reviews from "../../components/Reviews/Reviews";
+import { useSelector as useAuthSelector } from "react-redux"; // assuming auth slice is in state.auth
 
 const DetailRow = ({ label, value }) => (
   <div className="detail-row">
@@ -22,16 +25,32 @@ const ProductSinglePage = () => {
   const dispatch = useDispatch();
   const product = useSelector(getProductSingle);
   const productSingleStatus = useSelector(getSingleProductStatus);
+  const reviewProducts = useSelector(getAllProductsByReview);
+  const reviewProductsStatus = useSelector(getReviewProductsStatus);
+  const cartMessageStatus = useSelector(getCartMessageStatus);
+  const comparisonMessageStatus = useSelector(getComparisonMessageStatus);
+  // Get authenticated user info (assumes auth slice stores the validated user as state.auth.user)
+  const user = useSelector((state) => state.auth.user);
+  
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const cartMessageStatus = useSelector(getCartMessageStatus);
-  const comparisonMessageStatus = useSelector(getComparisonMessageStatus);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewContent, setReviewContent] = useState("");
+  const [reviewRating, setReviewRating] = useState(5); // default rating
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   useEffect(() => {
     dispatch(fetchAsyncProductSingle(id));
-  }, [id]);
-  
+  }, [id, dispatch]);
+
+  // Fetch reviews once product is loaded
+  useEffect(() => {
+    if (product && product.id) {
+      dispatch(fetchAsyncReviewsOfProduct(product.id));
+    }
+  }, [product, dispatch]);
+
   useEffect(() => {
     if (cartMessageStatus) {
       const timer = setTimeout(() => {
@@ -40,7 +59,7 @@ const ProductSinglePage = () => {
       return () => clearTimeout(timer);
     }
   }, [cartMessageStatus, dispatch]);
-  
+
   useEffect(() => {
     if (comparisonMessageStatus) {
       const timer = setTimeout(() => {
@@ -49,7 +68,6 @@ const ProductSinglePage = () => {
       return () => clearTimeout(timer);
     }
   }, [comparisonMessageStatus, dispatch]);
-  
 
   useEffect(() => {
     if (product?.images?.length) {
@@ -91,6 +109,30 @@ const ProductSinglePage = () => {
     dispatch(setComparisonMessageOn(true));
   };
 
+  const submitReview = async (e) => {
+    e.preventDefault();
+    if (!user || !product) return;
+    setIsSubmittingReview(true);
+    const reviewData = {
+      customer_id: user.user_id,
+      product_id: product.id,
+      content: reviewContent,
+      rating: Number(reviewRating),
+    };
+    try {
+      await dispatch(createAsyncReview(reviewData)).unwrap();
+      // Refresh reviews after successful submission
+      dispatch(fetchAsyncReviewsOfProduct(product.id));
+      setReviewContent("");
+      setReviewRating(5);
+      setShowReviewForm(false);
+    } catch (error) {
+      console.error("Error creating review:", error);
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
   return (
     <main className='py-5 bg-whitesmoke'>
       <div className='product-single'>
@@ -121,7 +163,7 @@ const ProductSinglePage = () => {
                 <div className='info flex align-center flex-wrap fs-14'>
                   <div className='rating'>
                     <span className='text-orange fw-5'>Rating:</span>
-                    <span className='mx-1'>{product?.rating}</span>
+                    <span className='product-rating mx-2'>{reviewProducts?.average_rating}</span>
                   </div>
                   <div className='vert-line'></div>
                   <div className='brand'>
@@ -154,7 +196,7 @@ const ProductSinglePage = () => {
                     {product?.specifications && Object.entries(product.specifications).map(([key, value]) => {
                       const label = key.charAt(0).toUpperCase() + key.slice(1);
                       return (
-                        <DetailRow key={key} specKey={key} label={label} value={value || '-'} />
+                        <DetailRow key={key} label={label} value={value || '-'} />
                       );
                     })}
                   </div>
@@ -184,10 +226,42 @@ const ProductSinglePage = () => {
                   <button type='button' className='buy-now btn'>
                     <span className='btn-text'>buy now</span>
                   </button>
+                  <button type='button' className='write-review-btn btn mx-3' onClick={() => setShowReviewForm(prev => !prev)}>
+                    <span className='btn-text'>Write a Review</span>
+                  </button>
                 </div>
+                {showReviewForm && (
+                  <form className="review-form" onSubmit={submitReview}>
+                    <h4>Submit Your Review</h4>
+                    <div className="form-group">
+                      <label>Rating (1-10):</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={reviewRating}
+                        onChange={(e) => setReviewRating(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Review:</label>
+                      <textarea
+                        value={reviewContent}
+                        onChange={(e) => setReviewContent(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <button type="submit" disabled={isSubmittingReview} className="submit-review-btn btn">
+                      {isSubmittingReview ? "Submitting..." : "Submit Review"}
+                    </button>
+                  </form>
+                )}
               </div>
             </div>
           </div>
+          {/* Reviews Section */}
+          <Reviews />
         </div>
       </div>
       {(cartMessageStatus || comparisonMessageStatus) && <PopupMessage message={"Item added"} />}

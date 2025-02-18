@@ -163,6 +163,37 @@ export const deleteBlogPost = createAsyncThunk('admin/deleteBlogPost', async(id,
   return { id };
 });
 
+// Reviews Slice
+export const createReview = createAsyncThunk('admin/createReview', async(review, { rejectWithValue }) => {
+  const response = await fetch(`${BASE_URL}review/reviews`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(review)
+  });
+  if (!response.ok) return rejectWithValue(await response.json());
+  return response.json();
+});
+
+export const updateReview = createAsyncThunk('admin/updateReview', async({ id, data }, { rejectWithValue }) => {
+  const response = await fetch(`${BASE_URL}review/reviews/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(data)
+  });
+  if (!response.ok) return rejectWithValue(await response.json());
+  return response.json();
+});
+
+export const deleteReview = createAsyncThunk('admin/deleteReview', async(id, { rejectWithValue }) => {
+  const response = await fetch(`${BASE_URL}review/reviews/${id}`, {
+    method: 'DELETE',
+    credentials: 'include'
+  });
+  if (!response.ok) return rejectWithValue(await response.json());
+  return { id };
+});
 
 const adminSlice = createSlice({
   name: 'admin',
@@ -222,6 +253,13 @@ const adminSlice = createSlice({
       .addCase(deleteBlogPost.pending, (state) => { state.status = STATUS.LOADING; })
       .addCase(deleteBlogPost.fulfilled, (state) => { state.status = STATUS.SUCCEEDED; })
       .addCase(deleteBlogPost.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; })
+
+      .addCase(updateReview.pending, (state) => { state.status = STATUS.LOADING; })
+      .addCase(updateReview.fulfilled, (state) => { state.status = STATUS.SUCCEEDED; })
+      .addCase(updateReview.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; })
+      .addCase(deleteReview.pending, (state) => { state.status = STATUS.LOADING; })
+      .addCase(deleteReview.fulfilled, (state) => { state.status = STATUS.SUCCEEDED; })
+      .addCase(deleteReview.rejected, (state, action) => { state.status = STATUS.FAILED; state.error = action.payload; })
   }
 });
 

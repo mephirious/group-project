@@ -5,6 +5,7 @@ import CrudForm from '../../components/Admin/Entities/Crud/CrudForm';
 import BlogPostForm from '../../components/Admin/Entities/Blog/BlogPostForm';
 import DataList from '../../components/Admin/Common/DataList';
 import './AdminEditPage.scss';
+import ReviewForm from '../../components/Admin/Entities/Review/ReviewForm';
 
 const AdminEditPage = () => {
   const [selectedEntity, setSelectedEntity] = useState(null);
@@ -36,6 +37,8 @@ const AdminEditPage = () => {
               <ProductForm entity={selectedEntity} selectedData={selectedData} onActionSuccess={handleRefresh} />
             ) : selectedEntity === 'blog-posts' ? (
               <BlogPostForm entity={selectedEntity} selectedData={selectedData} onActionSuccess={handleRefresh} />
+            ) : selectedEntity === 'reviews' ? (
+              <ReviewForm entity={selectedEntity} selectedData={selectedData} onActionSuccess={handleRefresh} />
             ) : (
               <CrudForm entity={selectedEntity} selectedData={selectedData} onActionSuccess={handleRefresh} />
             )}

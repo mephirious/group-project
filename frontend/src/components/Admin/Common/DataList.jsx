@@ -4,13 +4,15 @@ import Pagination from './Pagination';
 import './DataList.scss';
 import BlogPostListItem from '../Entities/Blog/BlogPostListItem';
 import ProductListItem from '../Entities/Product/ProductListItem';
+import ReviewListItem from '../Entities/Review/ReviewListItem';
 
 const entityEndpointMap = {
   brands: 'products/brands',
   types: 'products/types',
   categories: 'products/categories',
   'products': 'products/products',
-  'blog-posts': 'blogs/blog-posts'
+  'blog-posts': 'blogs/blog-posts',
+  'reviews': 'reviews/reviews'
 };
 
 const DataList = ({ entity, onSelectData, refresh }) => {
@@ -30,7 +32,7 @@ const DataList = ({ entity, onSelectData, refresh }) => {
     let endpoint = entityEndpointMap[entity];
     if (!endpoint) return;
     let url = `${BASE_URL}${endpoint}`;
-    if (entity === 'products' || entity === 'blog-posts') {
+    if (entity === 'products' || entity === 'blog-posts' || entity === 'reviews') {
       const skip = page * limit;
       const params = new URLSearchParams({
         limit: limit,
@@ -66,7 +68,7 @@ const DataList = ({ entity, onSelectData, refresh }) => {
   return (
     <div className="data-list">
       <h3>{entity.charAt(0).toUpperCase() + entity.slice(1)} List</h3>
-      {entity === 'products' || entity === 'blog-posts' ? (
+      {entity === 'products' || entity === 'blog-posts' || entity === 'reviews' ? (
         <div className="controls">
           <input
             type="text"
@@ -93,6 +95,8 @@ const DataList = ({ entity, onSelectData, refresh }) => {
               <BlogPostListItem item={item} onSelect={onSelectData} />
             ) : entity === 'products' ? (
               <ProductListItem item={item} onSelect={onSelectData} />
+            ) : entity === 'reviews' ? (
+              <ReviewListItem item={item} onSelect={onSelectData} />
             ) : (
               <div onClick={() => onSelectData(item)}>
                 {entity === 'brands' ? item.brand_name : entity === 'types' ? item.type_name : item.category_name}

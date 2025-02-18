@@ -15,6 +15,11 @@ func main() {
 
 	cfg := config.NewConfig()
 
+	PORT := os.Getenv("PORT")
+	if PORT == "" {
+		log.Fatal("PORT not set in .env file")
+	}
+
 	authServiceURL := os.Getenv("AUTH_SERVICE_URL")
 	if authServiceURL == "" {
 		log.Fatal("AUTH_SERVICE_URL not set in .env file")
@@ -64,7 +69,6 @@ func main() {
 	http.Handle("/reviews/reviews", middleware.CORS(middleware.AuthMiddleware(middleware.Logging(proxy.ReverseProxyHandler(reviewsServiceURL)), reviewPermissions)))
 
 	// Start Gateway Server
-	port := ":8080"
-	log.Printf("Gateway running on %s", port)
-	log.Fatal(http.ListenAndServe(port, nil))
+	log.Printf("Gateway running on %s", PORT)
+	log.Fatal(http.ListenAndServe(":"+PORT, nil))
 }
